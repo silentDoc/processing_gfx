@@ -23,6 +23,8 @@ The screenshot also shows how you can run oldskool DOS demos that don't want to 
 
 ## Some Functions  
 
+**The _Processing_ samples of the sine examples below can be found in the `Sines` folder**
+
 Before making the actual plasma, let's study a few functions that can be used to generate plasmas.  
   
 The sine function generates values that are always between -1 and +1, and when plotted looks like this:  
@@ -313,7 +315,7 @@ Every frame, for every pixel, it calculates a value that is the sum of 4 sines o
 
 int main(int argc, char *argv[])
 {
-  screen(256, 256, 0, <span style="color:red">"Plasma"</span>);
+  screen(256, 256, 0, "Plasma");
   double time;
   while(!done())
   {
