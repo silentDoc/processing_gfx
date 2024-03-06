@@ -10,6 +10,12 @@ float noise_x = 0;
 float noise_y = 0;
 float noise_y_start_offset =0;
 
+float min_height = -20;
+float max_height = 80;
+
+float fly_speed = 0.15;
+
+
 int mode = 1; // 0 - static, 1 - flying, motion
 
 
@@ -36,18 +42,18 @@ void draw()
     for(int x = 0; x < cols; x++)
     {
         // Noise method in Processing contains perlin random numbers
-        terrainHeights[x][y] = map(noise(noise_x,noise_y), 0,1, -20,80);
+        terrainHeights[x][y] = map(noise(noise_x,noise_y), 0,1, min_height,max_height);
         noise_x += noise_inc;
     }
     noise_y += noise_inc;
   }
   
   if(mode==1)
-    noise_y_start_offset -= noise_inc;
+    noise_y_start_offset -= fly_speed;
   
   background(0);
-  stroke(255);
-  noFill();
+  stroke(64);
+  
   
   translate(width/2, height/2);
   rotateX(PI/3);
@@ -57,6 +63,8 @@ void draw()
     beginShape(TRIANGLE_STRIP);
     for(int x = 0; x < cols; x++)
     {
+      int c = int(map(terrainHeights[x][y], min_height,max_height, 0,255));
+      fill(c,c,c);
       // Begin Shape : https://processing.org/reference/beginShape_.html
       vertex(x*scl, y*scl, terrainHeights[x][y]);
       vertex(x*scl, (y+1)*scl, terrainHeights[x][y+1]);
