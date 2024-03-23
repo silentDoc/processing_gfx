@@ -1,5 +1,5 @@
 % Generate num Y-Values of perlin noise, that vary from -amplitude/2 to amplitude/2
-% with octave set to wavelength
+% wavelength indicates the distance between control points.
 
 function ys = valueNoise1D(num, amplitude, wavelength)
   ys = zeros(num,1);
