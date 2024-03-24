@@ -9,6 +9,8 @@
     - [1D Value Noise](#1d-value-noise)
          - [Amplitude and Wavelength](#amplitude-and-wavelength)
     - [Octaves and composition (Fractal noise)](#octaves-and-composition-fractal-noise)
+        - [Computation of Octaves](#computation-of-octaves)
+        - [Composition of noise with other functions](#composition-of-noise-with-other-functions)
     - [2D Value Noise](#2d-value-noise)
 - [Perlin Noise](#perlin-noise)
     - [How is Perlin Noise generated?](#how-is-perlin-noise-generated)
@@ -161,7 +163,69 @@ Controlling the wavelength and amplitude will allow us to build noise that is co
 
 <img src="images/valueNoise1dCompv2.png" alt="Value noise composition" />
 
-The image above illustrates what 
+The image shows 2 plots. The image above plots each of the 4 octaves that contribute to the final noise function, plotted in black in the image below:
+
+- The <span style="color:red">red plot</span> has `wavelength = 500 ; amplitude = 120`. The control points are multiple of 500 and the value ranges from -60 to 60.
+- The <span style="color:blue">blue plot</span> has `wavelength = 250 ; amplitude = 60`. The control points are multiple of 250 and the value ranges from -30 to 30.
+- The <span style="color:green">green plot</span> has `wavelength = 125 ; amplitude = 40`. The control points are multiple of 125 and the value ranges from -20 to 20.
+- The <span style="color:magenta">magenta plot</span> has `wavelength = 10 ; amplitude = 5`.  The control points are multiple of 10 and the value ranges from -2.5 to 2.5.
+
+The image below is the **result of adding up all the octave to one noise fucntion**. Different octaves contribute to the general behavior of the noise function. In the example above, we can see that the overall behavior of the function is driven by the red octave (the one with more wavelength), that is affected by the blue and green octaves to make it less uniform. Finally, the magenta plot adds up low level noise to the function. 
+
+#### Computation of Octaves
+
+To speak about that, we will introduce here the term **frequency** as it is commonly used among the literature and we should be familiar enough with wavelength and amplitude. 
+
+```
+frequency = 1 / wavelength
+```
+Ok, so frequecy is the inverse of wavelength (little surprise about that, since this is signal processing 101). What does it mean? 
+
+Frequency tells us **how often we encounter a control point**, or **how much space do we have between control points**.
+
+A frequency of 1 would tell us that _every point is a control point_, while a frequency of `1/500 = 0.002` would tell us that we have a control point every 500 points (wavelength = 500).
+
+In most of the articles online, frequency is used to talk about noise and octaves, so just be aware that frequency is just another way to refer to wavelength. Now on to octaves.
+
+Each octave represents a noise function at a different frequency and amplitude. Higher-frequency (lower wavelength) octaves have more rapid changes in values, while lower-frequency (higher wavelength) octaves have smoother transitions. Similarly, higher-amplitude octaves contribute more to the overall noise function's amplitude, while lower-amplitude octaves have less influence.
+
+The term "octave" originates from music theory, where octaves represent doubling or halving of frequency. In the context of noise functions, each octave typically has a frequency that is twice that of the previous octave, and its amplitude is typically halved. This scaling allows for the creation of noise functions with a wide range of scales and levels of detail.
+
+To generate fractal noise, multiple octaves of a base noise function (e.g., Perlin noise or value noise) are combined by adding them together. The contribution of each octave is determined by its **frequency**, **amplitude**, and **persistence** (a factor controlling how quickly the amplitude decreases with each successive octave).
+
+In order to generate a composition of noise from octaves, we generally do the following (pseudocode):
+
+```csharp
+int initial_frequency   // Starting frquency (wavelength)
+int intial_amplitude    // Starting amplitude
+int persistance         // Factor that is applied between octaves 
+int num_octaves         // number of octaves to calculate
+
+int num_Points          // The number of points in the sequence. Ideally numPoints >>> wavelength
+int[] yValues           // The array that will store the values of the curve
+
+int frequency = initial_frequency
+int amplitude = initial_amplitude
+
+for(int octave = 0; octave < num_octaves; octave++)
+{
+   int[] octave_noise = noise(num_Points, frequency, amplitude)   
+
+   yValues   += octave_noise    // This is an actual sum by elements
+   frequency *= persistance
+   amplitude /= persistance
+}
+
+return yValues;
+```
+
+#### Composition of noise with other functions
+
+Noise can be composed or combined with any type of function, not only among octaves. We can use noise to add a little of variability to a known function, or to simulate effects such as to hand draw a square or a known shape. 
+
+The idea is simple, we can add the noise value to the function that we want to distort a little bit. Find a simple example below on how noise can impact a known function, the *sine function* 
+
+<img src="images/sinWithNoise.png" alt="Sine function with value noise composition" />
 
 ### 2D Value noise
 
