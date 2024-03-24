@@ -36,12 +36,9 @@ This spatial continuity, or coherence, has a lot of applications in computer gra
 There are many types of noise functions, most of them invented by [Ken Perlin](https://cs.nyu.edu/~perlin/). The most notable ones are
 
 - **Perlin noise** is a type of gradient noise that uses value interpolation over a series of random values taking into account gradients over vertices.
-<br/>
 - **Value Noise** was also invented by Ken Perlin, it can be seen as a simplification of perlin noise, instead of interpolating values using random gradients, it assigns random values to the vertices and interpolates the points within.  
-<br/>
 - **Simplex Noise** was also developed by Ken Perlin as an improvement over Perlin noise, it is a type of gradient noise like Perlin noise. It has a lower computational complexity and is often faster to generate than Perlin noise.
 Simplex noise produces similar natural-looking patterns with better properties in higher dimensions and reduced directional artifacts.
-<br/>
 - **Worley Noise (Cellular Noise)**, also known as cellular noise, generates patterns based on the proximity of sample points to randomly distributed seed points or "cells.". It produces cell-like structures with regions of varying characteristics, such as Voronoi cells or "regions of influence."
 Worley noise is useful for generating irregular patterns, textures, and terrain features.
 
@@ -66,17 +63,13 @@ The outline of the algorithms is the following:
 
 1. **Control Point Generation**:
 First, we generate a set of control points along the one-dimensional axis. The number of control points depends on the desired resolution and the extent of the axis (this will be related to **wavelength** that will be introduce shortly). Each control point consists of a position (x-coordinate) and a random value (noise value) associated with that position.
-<br/>
 2. **Random Value Assignment**:
 At each control point, assign a random value (noise value) within a specified **amplitude** range. The random values assigned to the control points represent the "heights" or "intensities" of the noise at those positions along the axis or grid.
-<br/>
 3. **Interpolation**:
 Given a normal point (non control) between two adjacent control points (1D) or four of them (2D), interpolate between the noise values of these control points to obtain the noise value at the query point. 
-<br/>
 4. **Smoothness and Continuity**:
 The choice of interpolation method affects the smoothness and continuity of the resulting noise function.
 Linear interpolation results in a piecewise-linear noise function with straight-line segments between control points. Cubic interpolation, on the other hand, produces a smoother noise function with curved segments between control points. It is recommended to use a cuadratic or cosine interpolation method at least to provide smoothness to the function. 
-<br/>
 5. **Repeat for All Points**:
 Repeat the interpolation process for all non control points along the axis (or grid) to generate the complete 1D (2D) value noise function. The density of query points determines the resolution and detail level of the generated noise function.
 
