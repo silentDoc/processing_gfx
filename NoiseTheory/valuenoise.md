@@ -16,6 +16,7 @@
         - [Computation of Layers](#computation-of-layers)
         - [Composition of noise with other functions](#composition-of-noise-with-other-functions)
     - [2D Value Noise](#2d-value-noise)
+      - [2D bilinear interpolation (but using cosines)](#2D-bilinear-interpolation-but-using-cosines)
 
 
 ## Value Noise
@@ -101,12 +102,12 @@ We repeat the interpolations for all the points we want to obtain, taking into a
 <img src="images/valueNoise1DStep2c.png" alt="Interpolation of all points" />
 
 
-<br/>
 
+```
 This process can be found on the script: `valueNoise1DStepByStep.m` of the matlab folder
+```
 
 
-<br/>
 <br/>
 
 ### 1D Value noise
@@ -148,6 +149,10 @@ Let's see how the different parameters behave when generating value noise. The *
 
 <img src="images/valueNoise1dAmplitude.png" alt="Value noise with different amplitudes" />
 
+```
+The code of the image above can be found in valueNoiseAmplitudeSample.m
+```
+
 You can see the plot of the same value noise distributions, with different _amplitudes_. 
 - The <span style="color:blue">blue plot</span> has an amplitude of 120, so it varies from 60 to -60. 
 - The <span style="color:green">green plot</span> has an amplitude of 80, so it varies from 40 to -40. 
@@ -162,6 +167,10 @@ The wavelenght of a value noise function is the distance between values to inter
 We can compare the effect of having different **wavelenghts** as we just did with the amplitudes:
 
 <img src="images/valueNoise1dWavelength.png" alt="Value noise with different amplitudes" />
+
+```
+The code of the image above can be found in valueNoiseWavelengthSample.m
+```
 
 Now you can see the plot of the same value noise distributions, with different _wavelengths_. 
 
@@ -205,7 +214,11 @@ The image shows 2 plots. The image above plots each of the 4 layers that contrib
 - The <span style="color:green">green plot</span> has `wavelength = 125 ; amplitude = 40`. The lattice points are multiple of 125 and the value ranges from -20 to 20.
 - The <span style="color:magenta">magenta plot</span> has `wavelength = 10 ; amplitude = 5`.  The lattice points are multiple of 10 and the value ranges from -2.5 to 2.5.
 
-The image below is the **result of adding up all the layers to one noise fucntion**. Different layers contribute to the general behavior of the noise function. In the example above, we can see that the overall behavior of the function is driven by the red component (the one with more wavelength), that is affected by the blue and green components to make it less uniform. Finally, the magenta plot adds up low level noise layer to the final noise function. 
+```
+The code of the above image can be found in valueNoise1DCompSample.m
+```
+
+The image below is the **result of adding up all the layers to one noise function**. Different layers contribute to the general behavior of the noise function. In the example above, we can see that the overall behavior of the function is driven by the red component (the one with more wavelength), that is affected by the blue and green components to make it less uniform. Finally, the magenta plot adds up low level noise layer to the final noise function. 
 
 #### Computation of Layers
 
@@ -247,6 +260,10 @@ The idea is simple, we can add the noise value to the function that we want to d
 
 <img src="images/sinWithNoise.png" alt="Sine function with value noise composition" />
 
+```
+The code of the above image can be found in valueNoiseCompSinSample.m
+```
+
 You may have seen this on some sketching programs, where lines and circles look like this (the captures are from a sketching program called [Pencil](https://pencil.evolus.vn/)):
 
 <img src="images/sketchSamples.jpg" alt="Some sketch program UI smaples. Noise is added to lines and circles to make them look handdrawn" />
@@ -265,3 +282,27 @@ The results can be seen also as an extrapolation of the 1D case. Instead of havi
 2D noise can also be interpreted as an image, where each pixel has a value (noise). This take helps us to understand even better the diference between noise and randomness:
 
 <img src="images/NoiseVsRandom2D.JPG" alt="Noise vs Randomness - 2D" />
+
+#### 2D bilinear interpolation (but using cosines)
+
+```
+Detailed code of the 2D interpolation can be found in valueNoise2DInterpolationDemo.m
+```
+
+<table style="width:100%">
+    <tr>
+        <th style="width:33%">Step 1</th>
+        <th style="width:33%">Step 2</th>
+        <th style="width:34%">Step 3</th>
+    </tr>
+    <tr>
+        <td><img src="./images/bllinearStep1.png"></td>
+        <td><img src="./images/bllinearStep2.png"></td>
+        <td><img src="./images/bllinearStep3.png"></td>
+    </tr>
+    <tr>
+        <td>Our lattice, showing the values of our lattice points (corners) - in orange</td>
+        <td>Interpolate the value at X of (nx0 and nx1) - in blue</td>
+        <td>Interpolate nx0 and nx1 through axis Y (in red). Found the desired value at (x,y) - dark gray line </td>
+    </tr>
+</table>
