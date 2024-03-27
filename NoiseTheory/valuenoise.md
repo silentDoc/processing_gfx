@@ -1,3 +1,9 @@
+<style>
+  code {
+    white-space : pre-wrap !important;
+    word-break: break-word;
+  }
+</style>
 # Value Noise Theory
 
 ## Table of Contents
@@ -6,23 +12,17 @@
     - [How is it generated?](#how-is-it-generated)
     - [1D Value Noise](#1d-value-noise)
          - [Amplitude and Wavelength](#amplitude-and-wavelength)
-    - [Octaves and composition (Fractal noise)](#octaves-and-composition-fractal-noise)
-        - [Computation of Octaves](#computation-of-octaves)
-        - [Fractal Brownian Noise](#fractal-brownian-noise)
+    - [Value noise composition (Brownian Value noise)](#value-noise-composition-brownian-value-noise)
+        - [Computation of Layers](#computation-of-layers)
         - [Composition of noise with other functions](#composition-of-noise-with-other-functions)
     - [2D Value Noise](#2d-value-noise)
-- [Perlin Noise](#perlin-noise)
-    - [How is Perlin Noise generated?](#how-is-perlin-noise-generated)
-    - [1D Perlin Noise](#1d-perlin-noise)
-    - [2D Perlin Noise](#2d-perlin-noise)
-- [Noise in _Processing_](#noise-in-processing)
 
 
 ## Value Noise
 
 Since I find value noise easier to understand, let's begin with it and we will continue with Perlin noise later. 
 
-Value noise is a smooth, continuous pseudo random function that yields values that range within a given `amplitude`. The function is built upon a set of points called `lattice points` that have a random value within range. The distance between lattice points will be called ´wavelength´. The rest of points that fall bewteen lattice points have a value that results from an interpolation of the lattice points that bound it. 
+Value noise is a smooth, continuous pseudo random function that yields values that range within a given `amplitude`. The function is built upon a set of points called `lattice points` that have a random value within amplitude range. The distance between lattice points will be called `wavelength`. The rest of points that fall bewteen lattice points have a value that results from an interpolation of the lattice points that bound it. 
 
 In the literature, noise functions are typically signals that output values between `-1 and 1` and make use of a parameter named `frequency`.  This notation will be later introduced when talking about Perlin noise, but in order to illustrate the properties of noise, value noise will be discussed first taking into account the `amplitude` and `wavelength` - as I find that wavelength is easier to understand for someone starting in this topic than fequency is, and value noise is also simpler to implement and understand. 
 
@@ -88,6 +88,8 @@ The interpolation function will be a topic that will be deeply discussed when we
 Another feature that we want to obtain is the continuity and smoothness between lattices and smoothness. The cosine interpolator yields better results than a linear interpolator, providing results like this one:
 
 <img src="images/valueNoise1DStep2b.png" alt="Interpolation of the first 4 lattices of value noise" />
+
+I am choosing the cosine interpolator for now because it only depends on the 2 lattice points that bound the point to be interpolated and it is easily extensible in the 2D case. But the interpolation used on perlin noise is not the cosine interpolator as we will see. Just bear in mind that the use of `cosine interpolation` is a decision I made as a tradeoff of simplicity and acceptable results for now. 
 
 <br/>
 <br/>
@@ -173,99 +175,69 @@ In the image above though, you can tell that all the plots have the same values 
 
 The wavelength is usually seen **as the level of detail, or granularity** of the noise. However, having a wavelength that is minimal (2 or 3) leads us to similar results as random noise. How can we build noise function that keep the smoothness of the plot we have seen with larger wavelength and show little fluctuations in detail?
 
-### Octaves and composition (Fractal Brownian noise)
+### Value noise composition (Brownian Value noise)
 
 We are managing the noise functions using `wavelength` and `amplitude` as main lattice parameters. The noise distributions we have been getting range from very smooth and continuous functions (with bigger amplitude and wavelength vlaues) to more variable ones (with smaller wavelength values)
 
-What if we want to get the best of both worlds? We would like for instance to get a noise function that has a higher level continuity but at the same time, low level variability, to make it more spicy. How could we attain that? 
+What if we want to get the best of both worlds? We would like for instance to get a noise function that has a **component** that defines higher level continuity but at the same time, another **component** that drives low level variability, to make it more spicy. How could we attain that? 
 
-The answer is **octaves and composition**. 
+The answer is **noise composition** to obtain **brownian noise**. 
 
-- Octaves are a component of a noise function that contribute to the overall result.  
-- Composition of octaves refers to the process of summing the values of all octaves in each point, to get the final noise value. 
+- **Components or layers** are a component of a noise function that contribute to the overall result.  
+- **Composition of layers** refers to the process of summing the values of all components in each point, to get the final noise value. 
+
+```
+We will detail this process deeper when we reach the perlin noise, and talk about octaves and fractality. 
+
+Octaves are components of the final noise obtained by doubling or halving the wavelength, and fractality refers to the ability of a signal to self repeat on different zoom levels. 
+
+For now, we will discuss noise composition only. 
+```
 
 Controlling the wavelength and amplitude will allow us to build noise that is consistent on different scale levels. An image will help much more than an explanation:
 
 <img src="images/valueNoise1dCompv2.png" alt="Value noise composition" />
 
-The image shows 2 plots. The image above plots each of the 4 octaves that contribute to the final noise function, plotted in black in the image below:
+The image shows 2 plots. The image above plots each of the 4 layers that contribute to the final noise function, plotted in black in the image below:
 
 - The <span style="color:red">red plot</span> has `wavelength = 500 ; amplitude = 120`. The lattice points are multiple of 500 and the value ranges from -60 to 60.
 - The <span style="color:blue">blue plot</span> has `wavelength = 250 ; amplitude = 60`. The lattice points are multiple of 250 and the value ranges from -30 to 30.
 - The <span style="color:green">green plot</span> has `wavelength = 125 ; amplitude = 40`. The lattice points are multiple of 125 and the value ranges from -20 to 20.
 - The <span style="color:magenta">magenta plot</span> has `wavelength = 10 ; amplitude = 5`.  The lattice points are multiple of 10 and the value ranges from -2.5 to 2.5.
 
-The image below is the **result of adding up all the octave to one noise fucntion**. Different octaves contribute to the general behavior of the noise function. In the example above, we can see that the overall behavior of the function is driven by the red octave (the one with more wavelength), that is affected by the blue and green octaves to make it less uniform. Finally, the magenta plot adds up low level noise to the function. 
+The image below is the **result of adding up all the layers to one noise fucntion**. Different layers contribute to the general behavior of the noise function. In the example above, we can see that the overall behavior of the function is driven by the red component (the one with more wavelength), that is affected by the blue and green components to make it less uniform. Finally, the magenta plot adds up low level noise layer to the final noise function. 
 
-#### Computation of Octaves
+#### Computation of Layers
 
-To speak about that, we will introduce here the term **frequency** as it is commonly used among the literature and we should be familiar enough with wavelength and amplitude. 
+Each layer represents a noise function at a different wavelength and amplitude. Bigger wavelength layers have smoother changes in values, while lower-wavelength components have more variable transitions. Similarly, higher-amplitude layers contribute more to the overall noise function's amplitude, while lower-amplitude layers have less influence.
 
-```
-frequency = 1 / wavelength
-```
-Ok, so frequecy is the inverse of wavelength. What does it mean? 
+To generate **brownian value noise**, multiple layers of a base noise function are combined by adding them together. The contribution of each octave is determined by its **wavelength** and **amplitude**. There is a third parameter, called **persistence** that defines how quickly the amplitude and wavelength decreases or increases with each successive layer.
 
-Frequency tells us **how often we encounter a lattice point**, or **how much space do we have between lattice points**.
-
-A frequency of 1 would tell us that _every point is a lattice point_, while a frequency of `1/500 = 0.002` would tell us that we have a lattice point every 500 points (wavelength = 500).
-
-In most of the articles online, frequency is used to talk about noise and octaves, so just be aware that frequency is just another way to refer to wavelength. Now on to octaves.
-
-Each octave represents a noise function at a different frequency and amplitude. Higher-frequency (lower wavelength) octaves have more rapid changes in values, while lower-frequency (higher wavelength) octaves have smoother transitions. Similarly, higher-amplitude octaves contribute more to the overall noise function's amplitude, while lower-amplitude octaves have less influence.
-
-The term "octave" originates from music theory, where octaves represent doubling or halving of frequency. In the context of noise functions, each octave typically has a frequency that is twice that of the previous octave, and its amplitude is typically halved. This scaling allows for the creation of noise functions with a wide range of scales and levels of detail.
-
-To generate fractal noise, multiple octaves of a base noise function (e.g., Perlin noise or value noise) are combined by adding them together. The contribution of each octave is determined by its **frequency**, **amplitude**, and **persistence** (a factor controlling how quickly the amplitude decreases with each successive octave).
-
-In order to generate a composition of noise from octaves, we generally do the following (pseudocode):
+In order to generate a composition of noise from layers, we generally do the following (pseudocode):
 
 ```csharp
-int initial_frequency   // Starting frquency (wavelength)
+int initial_wavelength  // Starting wavelength
 int intial_amplitude    // Starting amplitude
-int persistance         // Factor that is applied between octaves 
-int num_octaves         // number of octaves to calculate
+int persistance         // Factor that is applied between layers 
+int num_layers          // number of layers to calculate
 
-int num_Points          // The number of points in the sequence. Ideally numPoints >>> wavelength
+int num_Points          // The number of points in the sequence. With numPoints >>> wavelength
 int[] yValues           // The array that will store the values of the curve
 
-int frequency = initial_frequency
+int wavelength = initial_wavelength
 int amplitude = initial_amplitude
 
-for(int octave = 0; octave < num_octaves; octave++)
+for(int layer = 0; layer < num_layers; layer++)
 {
-   int[] octave_noise = noise(num_Points, frequency, amplitude)   
+   int[] layer_noise = noise(num_Points, wavelength, amplitude)   
 
-   yValues   += octave_noise    // This is an actual sum by elements
-   frequency *= persistance
-   amplitude /= persistance
+   yValues    += layer_noise    // This is an actual sum by elements
+   wavelength *= persistance
+   amplitude  /= persistance
 }
 
 return yValues;
 ```
-
-The resulting noise function from combining a set of octaves is called **Fractal Browsian noise (fBn)**
-
-#### Fractal Brownian Noise
-
-Fractal Brownian Noise (fBm) is a type of fractal noise that is commonly used in computer graphics, procedural generation, and simulations to generate complex and realistic-looking textures, terrains, and patterns. It is an extension of Perlin/Value noise and other types of gradient noise.
-
-Here's a breakdown of the key characteristics and components of Fractal Brownian Noise:
-
-- **Fractal Nature:**
-Fractal Brownian Noise exhibits self-similarity across multiple scales, meaning that the noise pattern looks similar regardless of the level of detail at which it is viewed.
-This self-similarity allows for the creation of natural-looking textures and terrains with intricate detail.
-- **Brownian Motion:**
-Fractal Brownian Noise is based on the concept of Brownian motion, which describes the random movement of particles in a fluid or gas. In the context of noise generation, Brownian motion refers to the cumulative effect of combining multiple layers (octaves) of noise with varying frequencies and amplitudes.
-- **Octaves:**
-Fractal Brownian Noise combines multiple octaves of a base noise function, such as Perlin noise or value noise.
-Each octave represents a layer of noise with a different frequency and amplitude. Higher-frequency octaves contribute fine detail to the overall noise pattern, while lower-frequency octaves contribute broader features.
-- **Persistence:**
-Persistence is a parameter that controls the influence of each successive octave on the final noise output. A higher persistence value results in stronger influence from higher-frequency octaves, leading to more detailed and "noisy" output. Lower persistence values produce smoother noise patterns with less high-frequency detail.
-- **Generation Process:**
-Fractal Brownian Noise is generated by summing together multiple octaves of noise, each scaled by a factor determined by its frequency and persistence. The noise values from each octave are added together to produce the final output, which exhibits characteristics of both randomness and structure.
-
-In summary, Fractal Brownian Noise is a type of fractal noise that combines multiple layers of noise with varying frequencies and amplitudes to create complex, self-similar patterns.
 
 #### Composition of noise with other functions
 
@@ -274,7 +246,6 @@ Noise can be composed or combined with any type of function, not only among octa
 The idea is simple, we can add the noise value to the function that we want to distort a little bit. Find a simple example below on how noise can impact a known function, the *sine function* 
 
 <img src="images/sinWithNoise.png" alt="Sine function with value noise composition" />
-
 
 You may have seen this on some sketching programs, where lines and circles look like this (the captures are from a sketching program called [Pencil](https://pencil.evolus.vn/)):
 
