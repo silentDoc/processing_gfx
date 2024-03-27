@@ -211,7 +211,7 @@ The image below is the **result of adding up all the layers to one noise fucntio
 
 Each layer represents a noise function at a different wavelength and amplitude. Bigger wavelength layers have smoother changes in values, while lower-wavelength components have more variable transitions. Similarly, higher-amplitude layers contribute more to the overall noise function's amplitude, while lower-amplitude layers have less influence.
 
-To generate **brownian value noise**, multiple layers of a base noise function are combined by adding them together. The contribution of each octave is determined by its **wavelength** and **amplitude**. There is a third parameter, called **persistence** that defines how quickly the amplitude and wavelength decreases or increases with each successive layer.
+To generate **brownian value noise**, multiple layers of a base noise function are combined by adding them together. The contribution of each layer is determined by its **wavelength** and **amplitude**. There is a third parameter, called **persistence** that defines how quickly the amplitude and wavelength decreases or increases with each successive layer.
 
 In order to generate a composition of noise from layers, we generally do the following (pseudocode):
 
@@ -241,7 +241,7 @@ return yValues;
 
 #### Composition of noise with other functions
 
-Noise can be composed or combined with any type of function, not only among octaves. We can use noise to add a little of variability to a known function, or to simulate effects such as to hand draw a square or a known shape. 
+Noise can be composed or combined with any type of function, not only among layers of noise. We can use noise to add a little of variability to a known function, or to simulate effects such as to hand draw a square or a known shape. 
 
 The idea is simple, we can add the noise value to the function that we want to distort a little bit. Find a simple example below on how noise can impact a known function, the *sine function* 
 
