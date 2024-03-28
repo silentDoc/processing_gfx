@@ -16,7 +16,11 @@
 
 Keeping spatial coherence opposite to being a random signal is the most notable feature of a noise function, and rather than a less than accurate description, the best way to understand noise is to compare it with pure randomness values: 
 
+<p align='center'>
+
 <img src="images/NoiseVsRandom1D.JPG" alt="Noise vs Randomness" />
+
+</p>
 
 In the image above the differences and applications of noise can be spotted. **Noise yields series of random values that have spatial continuity, opposite to pure randomness, where each value is completely independent from the previous one**
 

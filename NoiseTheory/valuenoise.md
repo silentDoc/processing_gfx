@@ -1,10 +1,4 @@
-<style>
-  code {
-    white-space : pre-wrap !important;
-    word-break: break-word;
-  }
-</style>
-# Value Noise Theory
+# Value Noise Basics
 
 ## Table of Contents
 
@@ -17,8 +11,14 @@
         - [Composition of noise with other functions](#composition-of-noise-with-other-functions)
     - [2D Value Noise](#2d-value-noise)
       - [How is 2D Noise generated?](#how-is-2D-noise-generated)
-      - [2D bilinear interpolation (but using cosines)](#2D-bilinear-interpolation-but-using-cosines)
+        - [2D bilinear interpolation (but using cosines)](#2D-bilinear-interpolation-but-using-cosines)
+      - [Composition of 2D Value Noise](#composition-of-2D-value-noise)
+      - [Wrap up](#wrap-up)
 
+
+[Back to noise index](readme.md)
+
+<br/>
 
 ## Value Noise
 
@@ -444,3 +444,53 @@ The bilinear intepolation can be easily understood with some visual support:
 ```
 Detailed code of the 2D interpolation can be found in valueNoise2DInterpolationDemo.m
 ```
+<br/>
+
+### Composition of 2D Value Noise
+
+Composition of 2D value noise works the same way it does in 1D. Multiple layers of 2D value noise with different wavelengths and amplitudes can be added to obtain very interesting noise signals.
+
+In the following table a composition of noise is shown, first displaying each layer individually, to finally display the composition of the 4 of them. 
+
+To illustrate the users of noise and layer composition, we show 2 possible applications, **terrain generation** and **noise images**, that could be used for games, cloud rendering and other stuff. 
+
+<table style="width:100%">
+    <tr>
+        <th style="width:50%">Terrain</th>
+        <th style="width:50%">Noise - Clouds</th>
+    </tr>
+    <tr>
+        <td><img src="./images/vn2DComp1_Terrain.png"></td>
+        <td><img src="./images/vn2DComp1_Img.png"></td>
+    </tr>
+        <tr>
+        <td><img src="./images/vn2DComp2_Terrain.png"></td>
+        <td><img src="./images/vn2DComp2_Img.png"></td>
+    </tr>
+    <tr>
+        <td><img src="./images/vn2DComp3_Terrain.png"></td>
+        <td><img src="./images/vn2DComp3_Img.png"></td>
+    </tr>
+    <tr>
+        <td><img src="./images/vn2DComp4_Terrain.png"></td>
+        <td><img src="./images/vn2DComp4_Img.png"></td>
+    </tr>
+     <tr>
+        <td>Final Compositions</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td><img src="./images/vn2DCompF_Terrain.png"></td>
+        <td><img src="./images/vn2DCompF_Img.png"></td>
+    </tr>
+</table>
+
+
+
+### Wrap up
+
+Value noise is a very simple approach to generate **coherent randomness**, it opened up a lot of possibilities in computer graphics, from procedural generation to improvements on textures, cinema special effects, etc. 
+
+The value noise is probably the easier one to implement and understand, and its basics should be useful to proceed to **Perlin noise** which is probably the _de facto standard_ that most shaders and programs provide. 
+
+[Back to noise index](readme.md)
