@@ -16,6 +16,7 @@
         - [Computation of Layers](#computation-of-layers)
         - [Composition of noise with other functions](#composition-of-noise-with-other-functions)
     - [2D Value Noise](#2d-value-noise)
+      - [How is 2D Noise generated?](#how-is-2D-noise-generated)
       - [2D bilinear interpolation (but using cosines)](#2D-bilinear-interpolation-but-using-cosines)
 
 
@@ -45,21 +46,23 @@ Linear interpolation results in a piecewise-linear noise function with straight-
 5. **Repeat for All Points**:
 Repeat the interpolation process for all non lattice points along the axis (or grid) to generate the complete 1D (2D) value noise function. The density of query points determines the resolution and detail level of the generated noise function.
 
-In order to be able to check the process in detail, I have also implemented the process in _Matlab_ in a separate folder. We will discern between the 1D case and 2D case. Let's see how we do it hands on, we will cover 1D value noise first and then extend to the 2D case.
+In order to be able to check the process in detail, I have also implemented the process in _Matlab_ (or _Octave_) in a separate folder. We will discern between the 1D case and 2D case. Let's see how we do it hands on, we will cover 1D value noise first and then extend to the 2D case.
 
 To see this working step by step, we describe the process next, with images:
 
-´´´
+```
 Assume we want to generate value noise over 1000 points
 Wavelength = 100
 Amplitude = 100
-´´´
+```
 
 As mentioned, wavelength will set the distance between lattice points. 
 
 - **Steps 1 and 2 - Lattice point Generation and random value assignment**:
 
+<p align="center">
 <img src="images/valueNoise1DStep1.png" alt="Generation of lattice points and random value assignment" />
+</p>
 
 In this step we create lattice points and assign random values to them. The lattice point positions are defined by the `wavelength` parameter, and their value is random. 
 <br/>
@@ -68,7 +71,9 @@ In this step we create lattice points and assign random values to them. The latt
 
 Once the lattice points are defined, we start interpolating all the noise values that lie between lattice points unsing an interpolation function. In the image below, the first segment has been interpolated. 
 
+<p align="center">
 <img src="images/valueNoise1DStep2.png" alt="Interpolation of the first lattice of value noise" />
+</p>
 
 The interpolation method that I will be using for all the **value noise** section is the `cosine interpolation`, a rather simple interpolation method that yields better results than the linear interpolation and works like this:
 
@@ -88,20 +93,21 @@ The interpolation function will be a topic that will be deeply discussed when we
 
 Another feature that we want to obtain is the continuity and smoothness between lattices and smoothness. The cosine interpolator yields better results than a linear interpolator, providing results like this one:
 
+<p align="center">
 <img src="images/valueNoise1DStep2b.png" alt="Interpolation of the first 4 lattices of value noise" />
+</p>
 
 I am choosing the cosine interpolator for now because it only depends on the 2 lattice points that bound the point to be interpolated and it is easily extensible in the 2D case. But the interpolation used on perlin noise is not the cosine interpolator as we will see. Just bear in mind that the use of `cosine interpolation` is a decision I made as a tradeoff of simplicity and acceptable results for now. 
 
-<br/>
 <br/>
 
 - **Step 5 - Repeat for all points**:
 
 We repeat the interpolations for all the points we want to obtain, taking into account the lattice in which each point lies and we finally get the noise function:
 
+<p align="center">
 <img src="images/valueNoise1DStep2c.png" alt="Interpolation of all points" />
-
-
+</p>
 
 ```
 This process can be found on the script: `valueNoise1DStepByStep.m` of the matlab folder
@@ -147,7 +153,9 @@ File `valueNoise1D.m` in the matlab folder shows working code on how to generate
 
 Let's see how the different parameters behave when generating value noise. The **amplitude** expresses the value variability of the noise. This can be seen in the next figure:
 
+<p align="center">
 <img src="images/valueNoise1dAmplitude.png" alt="Value noise with different amplitudes" />
+</p>
 
 ```
 The code of the image above can be found in valueNoiseAmplitudeSample.m
@@ -166,7 +174,9 @@ The wavelenght of a value noise function is the distance between values to inter
 
 We can compare the effect of having different **wavelenghts** as we just did with the amplitudes:
 
+<p align="center">
 <img src="images/valueNoise1dWavelength.png" alt="Value noise with different amplitudes" />
+</p>
 
 ```
 The code of the image above can be found in valueNoiseWavelengthSample.m
@@ -205,7 +215,9 @@ For now, we will discuss noise composition only.
 
 Controlling the wavelength and amplitude will allow us to build noise that is consistent on different scale levels. An image will help much more than an explanation:
 
+<p align="center">
 <img src="images/valueNoise1dCompv2.png" alt="Value noise composition" />
+</p>
 
 The image shows 2 plots. The image above plots each of the 4 layers that contribute to the final noise function, plotted in black in the image below:
 
@@ -258,7 +270,10 @@ Noise can be composed or combined with any type of function, not only among laye
 
 The idea is simple, we can add the noise value to the function that we want to distort a little bit. Find a simple example below on how noise can impact a known function, the *sine function* 
 
-<img src="images/sinWithNoise.png" alt="Sine function with value noise composition" />
+<p align="center">
+
+![](images/sinWithNoise.png)
+</p>
 
 ```
 The code of the above image can be found in valueNoiseCompSinSample.m
@@ -266,34 +281,153 @@ The code of the above image can be found in valueNoiseCompSinSample.m
 
 You may have seen this on some sketching programs, where lines and circles look like this (the captures are from a sketching program called [Pencil](https://pencil.evolus.vn/)):
 
-<img src="images/sketchSamples.jpg" alt="Some sketch program UI smaples. Noise is added to lines and circles to make them look handdrawn" />
+<p align="center">
+<img src="images/sketchSamples.jpg" alt="Some sketch program UI smaples. Noise is added to lines and circles to make them look handdrawn"/>
+</p>
 
 <br/>
 <br/>
 
 ### 2D Value noise
 
-2D value noise is a natural extension of 1D value noise. In the 1D case, `we generate noise values Y over the axis X`, in the 2D case, `we generate noise values Z over the a grid formed by axis XY`.
+2D value noise is a natural extension of 1D value noise. In the 1D case, `we generate noise values Y over the axis X`, in the 2D case, `we generate noise values Z over the a grid formed by axis XY`. In the 1D case, our `lattice points` were placed evenly over the X axis, and assigned a random value. In the 2D case, our lattices are not segments of length `wavelength` but squares that have side length = wavelength over a grid. 
 
-The results can be seen also as an extrapolation of the 1D case. Instead of having a 2D function X-Noise we will now have a 3D function XY-Noise, as can be seen here:
+The results can be seen also as an extrapolation of the 1D case. While in the 1D case we obtained a noise function that had 2 axis - X for the noise position and Y for the noise value, we will now have a function over 3 axis, where X and Y provide the position and Z can be seen as the noise value. 
 
+This is why noise functions are often used to procedurally generate terrains, as can be seen in the following animation:
+<p align="center">
 <img src="images/valuenoise2D_3.gif" alt="2D Value Noise" />
+</p>
 
-2D noise can also be interpreted as an image, where each pixel has a value (noise). This take helps us to understand even better the diference between noise and randomness:
-
+2D noise can also be interpreted as an image, where each pixel (XY) has a value (noise), in form of grayscale value. This take helps us to understand even better the diference between noise and randomness:
+<p align="center">
 <img src="images/NoiseVsRandom2D.JPG" alt="Noise vs Randomness - 2D" />
+</p>
+
+### How is 2D noise generated?
+
+The generation of 2D is straightforward from the generation of 1D noise. We only have to take into account the following:
+
+- Our position space is 2D instead of 1D, that means that `our lattices are now squares instead of segments`, as mentioned
+- The value interpolation will be done using `4 points instead of 2`. The interpolation procedure will be detailed in the next section
+
+The outline of the algorithms is the following:
+
+1. **Lattice point Generation**:
+First, we generate a set of evenly spaced lattice points along the two-dimensional grid. The number of lattice points depends on the wavelength, and will be `(total_X_points / wavelength) * (total_X_points / wavelength)`. Each lattice point consists of a position (xy-coordinate) and a random value (noise value) associated with that position.
+2. **Random Value Assignment**:
+At each lattice point, assign a random value (noise value) within a specified **amplitude** range. The random values assigned to the lattice points represent the "heights" or "intensities" of the noise at those positions along grid.
+3. **Interpolation**:
+A non lattice point contained in a square formed by 4 lattice points will receive the value that results from the interpolation of the lattice points random values. 
+4. **Smoothness and Continuity**:
+The interpolation method affects continuity and smoothness. To keep consistency with the 1D case, we will keep using consine interpolation but in the 2D case we will be combining it with the bilinear interpolation. 
+5. **Repeat for All Points**:
+Repeat the interpolation process for all non lattice points of the grid to generate the complete 2D value noise function. The density of query points determines the resolution and detail level of the generated noise function.
+
+The visual representation of the process can be found next, as we did in the 1D case:
+
+
+- **Steps 1 and 2 - Lattice point Generation and random value assignment**:
+
+<p align="center">
+<img src="images/valueNoise2DStep1.gif" alt="Generation of lattice points and random value assignment in the grid" />
+</p>
+
+In the 1D case, lattice points were evenly spaces across the X-axis. In the 2D case, we have a grid, and lattice points are also evenly spaces across the X and Y axis, as can be seen in the animation. The distance between consecutive lattice points along the X or Y axis is equal to wavelength, of course. Each one of them has a random value in range of the _amplitude_. 
+<br/>
+
+- **Steps 3 and 4 - Interpolation and smoothness and continuity**:
+
+Interpolation details will be covered in the next section, but when it comes to the intepolation process, we do the same we did in the 1D case, but taking into account **all 4 lattice points that define the "section" that contains a given point**. The interpolation method that we are using is the _bilinear interpolation_ but using the 1D cosine interpolator instead of the linear formula, it provides better results without that much loss of performance. 
+
+In the following animations, the progress of creating 2D noise can be followed. 
+
+_First lattice_ : 
+
+<p align="center">
+<img src="images/valueNoise2DStep2a.gif" alt="Interpolation of the first lattice"/>
+</p>
+
+_First four lattices (row):_
+<p align="center">
+<img src="images/valueNoise2DStep2b.gif" alt="Interpolation of threee lattices"/>
+</p>
+
+_All the points:_
+<p align="center">
+<img src="images/valueNoise2DStep3.gif" alt="Interpolation of all the points"/>
+</p>
+
+We finally obtain the 2D noise function generated by the lattice points and random values that were set at the beginning. In the animation above, the final frames show the position of the lattice points, forming a grid as well. 
+
+As it can be seen, the 2D value noise can be used to generate random terrains but also noise images. 
+
+
+```
+This process can be found on the script: `valueNoise2DStepByStep.m` of the matlab folder
+```
+
+<br/>
 
 #### 2D bilinear interpolation (but using cosines)
 
+As mention, 2D interpolation is worth detailing, as it is a critical operation of the process. In the 1D case, we had 2 lattice points `Xs` with their respective values `Ys` :  `(x0, y0) and (x1,y1)`. What we did was to interpolate the value `y` of a point `x` that complied with `x0 < x < x1`. We used the cosine interpolation for that, the visualization of the method can be seen next:
+
+<div style="width:75%; margin: auto;">
+<p align="center">
+<img src="images/1DInterpolation.jpg" alt="1D Interpolation of a value using cosine interp"/>
+</p>
+</div>
+
+Remember that in order to obtain the value of **y** given **x**, knowing the values of _x0, y0, x1, and y1_, we are using the cosine interpolator - a linear interpolator that uses the cosine function to smooth the function. 
+
+```csharp
+// Given a point x between lattice start position x0 and lattice end position x1 ; with x0 < x < x1
+// Given the values of noise y0 at x0  and y1 at x1
+// Given wavelength = length of the lattice = x1-x0
+wavelength = x1 - x0 + 1;
+normalized_position = mod(x, wavelength) /  wavelength     // ranges (0,1)
+angle = normalized_position * PI
+weight = (1 - cos(angle)) * 0.5
+
+value_at_x = y1 * (1-weight) + y0*weight
 ```
-Detailed code of the 2D interpolation can be found in valueNoise2DInterpolationDemo.m
+
+<br/>
+In 2D, we can use the same method but we have to take into account that we have to consider 4 lattice points instead of two, so we do the following:
+
 ```
+Given a lattice defined by the following points:
+
+(x0, y0, z00) , (x0, y1, z01) , (x1, y0, z10) ,  (x1, y1, z11) 
+
+We want to find the value Z of a known position (X, Y), that ensures that:
+
+x0 < X < x1
+y0 < Y < y1
+```
+In order to retrieve Z at (X,Y) , we:
+
+- **Step 1**: Consider 2 opposite lattice sides:
+`Side 0 => From (x0,y0) to (x0, y1)`
+`Side 1 => From (x1,y0) to (x1, y1)`
+And find the values `nx0` and `nx1`, resuting from:
+`nx0 = InterpCosine(Side0 at Y)`
+`nx1 = InterpCosine(Side1 at Y)`
+<br/>
+
+- **Step 2**: With values `nx0` and `nx1`, find `Z`:
+`Z = InterpCosine(nx0 to nx1 at X)`
+
+<br/>
+
+The bilinear intepolation can be easily understood with some visual support:
 
 <table style="width:100%">
     <tr>
-        <th style="width:33%">Step 1</th>
+        <th style="width:33%">Initial setup</th>
         <th style="width:33%">Step 2</th>
-        <th style="width:34%">Step 3</th>
+        <th style="width:33%">Step 3</th>
     </tr>
     <tr>
         <td><img src="./images/bllinearStep1.png"></td>
@@ -301,8 +435,12 @@ Detailed code of the 2D interpolation can be found in valueNoise2DInterpolationD
         <td><img src="./images/bllinearStep3.png"></td>
     </tr>
     <tr>
-        <td>Our lattice, showing the values of our lattice points (corners) - in orange</td>
-        <td>Interpolate the value at X of (nx0 and nx1) - in blue</td>
-        <td>Interpolate nx0 and nx1 through axis Y (in red). Found the desired value at (x,y) - dark gray line </td>
+        <td>Our lattice, showing the values of the 4 lattice points (corners) - in orange</td>
+        <td>Full interpolation of Side 0 and Side 1 through axis Y, to find nx0 and nx1 - in blue</td>
+        <td>Interpolation nx0 and nx1 through axis X (in red). Found the desired value Z at (X,Y) - dark gray line </td>
     </tr>
 </table>
+
+```
+Detailed code of the 2D interpolation can be found in valueNoise2DInterpolationDemo.m
+```

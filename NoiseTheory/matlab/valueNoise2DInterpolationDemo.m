@@ -29,6 +29,28 @@ function valueNoise2DInterpolationDemo()
 
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   %  Visual representation of what we have done
+
+  % We will show the 1D interpolation first
+  figure;
+  side1D = zeros(1,num_points);
+  for i=2:num_points-1
+    side1D(i) = interpCos(i, num_points, noise(1,1), noise(num_points,1));
+  endfor
+  side1D(1) = noise(1,1);
+  side1D(num_points) = noise(num_points,1);
+  xs = 1:num_points;
+  plot(xs, side1D, 'linewidth', 2, 'color','#4672eb'); hold on;
+  plot([1 1], [0 side1D(1)], 'linewidth', 2, 'color', '#f2964b' );hold on;
+  plot(1, side1D(1), 'o','MarkerSize',2);   hold on;
+  plot([num_points num_points], [0 side1D(num_points)], 'linewidth', 2, 'color', '#f2964b' );hold on;
+  plot(num_points, side1D(num_points), 'o','MarkerSize',2); hold on;
+
+  poi1 = floor(num_points/3);
+  plot([poi1 poi1], [0 side1D(poi1)], 'linewidth', 2, 'color', '#fc0015' );hold on;
+  plot(poi1, side1D(poi1), 'o','MarkerSize',2); hold on;
+  line ([0 num_points], [0 0], "linestyle", "--", "color", "k");
+  axis off; box off;
+
   figure;
   grid = zeros(grid_size);
 
