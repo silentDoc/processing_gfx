@@ -28,6 +28,8 @@ Value noise is a smooth, continuous pseudo random function that yields values th
 
 In the literature, noise functions are typically signals that output values between `-1 and 1` and make use of a parameter named `frequency`.  This notation will be later introduced when talking about Perlin noise, but in order to illustrate the properties of noise, value noise will be discussed first taking into account the `amplitude` and `wavelength` - as I find that wavelength is easier to understand for someone starting in this topic than fequency is, and value noise is also simpler to implement and understand. 
 
+`The folder "matlab_value" contains all the scripts used to generate the visuals of this article, and the basic value noise 1D and 2D functions.`
+
 ### How is it generated?
 
 Generating value noise involves assigning random values to a set of lattice points along a one-dimensional axis (1D) or two-dimensional grid (2D) and then interpolating between these values to obtain noise values at arbitrary points between the lattice points.
