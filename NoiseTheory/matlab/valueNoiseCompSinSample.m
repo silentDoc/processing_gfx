@@ -8,17 +8,17 @@ y_noise = valueNoise1D(1000, 20, 10);        % Wavelength 10, amp 5, ranging fro
 y_sin_noise = y_sin + y_noise.';
 
 figure; subplot(3,1, 1);
-plot(x_sin, y_sin);
+plot(x_sin, y_sin, 'linewidth', 3);
 xlabel('x');
 ylabel('sin(x)');
-title('Plot of Sinusoidal Function');
+title('Plot of Sinusoidal Function - Values from -256 to 256');
 subplot(3,1, 2);
-plot(x_sin, y_noise);
+plot(x_sin, y_noise, 'r', 'linewidth', 2);
 xlabel('x');
 ylabel('Value Noise');
-title('Value Noise Function');
+title('Value Noise Function - Values from 10 to 10');
 subplot(3,1, 3);
-plot(x_sin, y_sin_noise);
+plot(x_sin, y_sin_noise, 'linewidth', 2);
 xlabel('x');
 ylabel('Sin with noise');
 title('Plot of Sinusoidal Function with noise');

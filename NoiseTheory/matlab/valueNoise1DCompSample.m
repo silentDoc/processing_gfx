@@ -11,14 +11,14 @@ comp = comp + y3s;
 comp = comp + y4s;                  % Comp holds the sum of all Layers
 
 figure; subplot(2,1, 1);
-plot(xs, ys, 'red');
-hold on; plot(xs, y2s, 'b');
-hold on; plot(xs, y3s, 'g');
-hold on; plot(xs, y4s, 'magenta');
+plot(xs, ys, 'r', 'linewidth', 4);
+hold on; plot(xs, y2s, 'b', 'linewidth', 3);
+hold on; plot(xs, y3s, 'g', 'linewidth', 2);
+hold on; plot(xs, y4s, 'magenta', 'linewidth', 2);
 set(gca,'xtick',[0:125:2000])
 set (gca, "xgrid", "on");
 subplot(2,1, 2);
-plot(xs, comp, 'k');
+plot(xs, comp, 'k', 'linewidth', 2);
 hold on;
 set(gca,'xtick',[0:125:2000])
 set (gca, "xgrid", "on");

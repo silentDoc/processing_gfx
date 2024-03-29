@@ -17,13 +17,20 @@ function ys = valueNoise1DStepByStep(num_points, wavelength, amplitude)
   for p=1:num_points+1
     if mod(p-1, wavelength) == 0
       lattice_index = ((p-1) / wavelength) +1 ;
-      plot([p-1 p-1],[0 lattice_points(lattice_index)], 'red'); hold on;
+      plot([p-1 p-1],[0 lattice_points(lattice_index)], 'color', 'r', 'linewidth', 3); hold on;
       plot(p-1,lattice_points(lattice_index),'o','MarkerSize',5); hold on;
     endif
   endfor
+
+
   set(gca,'xtick',[0:wavelength:num_points])
   set (gca, "xgrid", "on");
+
   xlim([-5 num_points+5]);
+
+##    plot(xs,ys, 'color', 'b', 'linewidth', 3); hold on; % Step 1 display
+##    return;
+
 
   % Step 2 - Show how 2 lattice points are used to interpolate all the points in between
   % Pick the first two lattice points
@@ -39,7 +46,8 @@ function ys = valueNoise1DStepByStep(num_points, wavelength, amplitude)
     ys(i) = interpCos(i-1, wavelength, v_lattice_start, v_lattice_end);
   endfor
 
-  % plot(xs,ys, 'blue'); hold on;
+##    plot(xs,ys, 'color', 'b', 'linewidth', 3); hold on; % Step 2 display
+##    return;
 
   % Step 2b, let's do some more points
 
@@ -57,7 +65,10 @@ function ys = valueNoise1DStepByStep(num_points, wavelength, amplitude)
     endif
   endfor
 
- % plot(xs,ys, 'blue'); hold on;
+##    plot(xs,ys, 'color', 'b', 'linewidth', 3); hold on; % Step 2b display
+##    return;
+
+
  % Step 2c, let's do the remaining points
  for i=wavelength*4+1:num_points
     if mod(i-1, wavelength) == 0
@@ -69,7 +80,10 @@ function ys = valueNoise1DStepByStep(num_points, wavelength, amplitude)
       ys(i) = interpCos(i-1, wavelength, v_lattice_start, v_lattice_end);
     endif
   endfor
-  plot(xs,ys, 'blue'); hold on;
+
+  plot(xs,ys, 'color', 'b', 'linewidth', 3); hold on;  % Step 2c - final
+
+
 end;
 
 % Octave does not have the Cosine interpolator, so we code it ourselves

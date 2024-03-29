@@ -14,8 +14,8 @@ figure; imagesc(layer_3); colormap(bone); title('Layer 3 - W20, A10');
 figure; mesh(layer_3);title('Layer 3 - W20, A10');
 
 layer_4 = valueNoise2D(num_points, 5, 5);          % Layer 4 - wavelength 5, amp 5
-figure; imagesc(layer_3); colormap(bone); title('Layer 4 - W5, A5');
-figure; mesh(layer_3);title('Layer 4 - W5, A5');
+figure; imagesc(layer_4); colormap(bone); title('Layer 4 - W5, A5');
+figure; mesh(layer_4);title('Layer 4 - W5, A5');
 
 
 comp = layer_1 + layer_2 + layer_3 + layer_4;

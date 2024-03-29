@@ -270,10 +270,12 @@ Noise can be composed or combined with any type of function, not only among laye
 
 The idea is simple, we can add the noise value to the function that we want to distort a little bit. Find a simple example below on how noise can impact a known function, the *sine function* 
 
+<div style="width:75%; margin: auto;">
 <p align="center">
 
-![](images/sinWithNoise.png)
+<img src="images/sinWithNoisev2.png">
 </p>
+</div>
 
 ```
 The code of the above image can be found in valueNoiseCompSinSample.m
