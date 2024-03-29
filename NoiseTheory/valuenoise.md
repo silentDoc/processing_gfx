@@ -495,6 +495,15 @@ To illustrate the users of noise and layer composition, we show 2 possible appli
 
 Value noise is a very simple approach to generate **coherent randomness**, it opened up a lot of possibilities in computer graphics, from procedural generation to improvements on textures, cinema special effects, etc. 
 
+Value noise relies on the following elements:
+
+- Lattice points that are evenly distanced along our space
+- Random values that are assigned to each lattice point
+- Each non lattice point gets its value from the interpolation of the values of the lattice points that enclose it. 
+- Any interpolation method should work, but one that provides smooth results will yield better final noise.
+
+We have also seen the concepts of wavelength and amplitude of noise, and that several noise functions can be composed to provide a more sofisticated end result. 
+
 The value noise is probably the easier one to implement and understand, and its basics should be useful to proceed to **Perlin noise** which is probably the _de facto standard_ that most shaders and programs provide. 
 
 [Back to noise index](readme.md)
