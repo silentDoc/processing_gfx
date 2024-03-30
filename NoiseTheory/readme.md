@@ -53,7 +53,7 @@ This section is placed on a [dedicated file](valuenoise.md)
 
 ## Perlin Noise
 
-This section is placed on a [dedicated file](perlinnoise.md)
+This section is placed on a [dedicated file](perlinnoise.md) (WIP)
 
 ## Noise in Processing
 
