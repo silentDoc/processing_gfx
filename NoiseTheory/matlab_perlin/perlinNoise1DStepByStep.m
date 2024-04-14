@@ -59,6 +59,8 @@ end;
 function v = fade(t)
   % Smoothing step function proposed by Perlin
   % 6t5-15t4+10t3
+  % Note : this is from the improved version, the original one : 3x2-2x3 (0<x<1)
+
   v = (6 * t^5) - (15*t^4) + (10 * t^3);
   % F(t) = t3(t(t-15)+10) -- this would be more efficient
 end;

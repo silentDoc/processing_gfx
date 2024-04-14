@@ -425,7 +425,7 @@ And find the values `nx0` and `nx1`, resuting from:
 
 <br/>
 
-The bilinear intepolation can be easily understood with some visual support:
+I guess we could call this a "bicosine" interpolation :) . The bilinear intepolation can be easily understood with some visual support:
 
 <table style="width:100%">
     <tr>
