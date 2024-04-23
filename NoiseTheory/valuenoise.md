@@ -24,7 +24,7 @@
 
 Since I find value noise easier to understand, let's begin with it and we will continue with Perlin noise later. 
 
-Value noise is a smooth, continuous pseudo random function that yields values that range within a given `amplitude`. The function is built upon a set of points called `lattice points` that have a random value within amplitude range. The distance between lattice points will be called `wavelength`. The rest of points that fall bewteen lattice points have a value that results from an interpolation of the lattice points that bound it. 
+Value noise is a smooth, continuous pseudo random function that yields values that range within a given `amplitude`. The function is built upon a set of points called `lattice points` that have a random value within amplitude range. The distance between lattice points will be called `wavelength`. The rest of points that fall between lattice points have a value that results from an interpolation of the lattice points that bound it. 
 
 In the literature, noise functions are typically signals that output values between `-1 and 1` and make use of a parameter named `frequency`.  This notation will be later introduced when talking about Perlin noise, but in order to illustrate the properties of noise, value noise will be discussed first taking into account the `amplitude` and `wavelength` - as I find that wavelength is easier to understand for someone starting in this topic than fequency is, and value noise is also simpler to implement and understand. 
 
