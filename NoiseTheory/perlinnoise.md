@@ -69,8 +69,12 @@ To render value noise, I take advantage of the **cosine interpolation** method t
 I have already discussed the implementation details of the cosine interpolator in the [value noise aricle](./valuenoise.md#how-is-it-generated), but just for quick comparison, the interpolation formula is the following:
 
 ```math
-angle = x_p * \Pi  \qquad ;x_p \in (0,1) \\[10pt]
-w = \frac{1 - \cos{(angle)}}{2} \\[10pt]
+angle = x_p * \Pi  \qquad ;x_p \in (0,1)
+```
+```math
+w = \frac{1 - \cos{(angle)}}{2}
+```
+```math
 y_p = y_1*(1-w) + y_0 * w
 ```
 
