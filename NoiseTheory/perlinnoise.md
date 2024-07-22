@@ -1,6 +1,3 @@
-<script type="text/javascript"
-  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
 # Perlin Noise Basics (Very WIP)
 
 ## Table of Contents
@@ -71,7 +68,10 @@ To render value noise, I take advantage of the **cosine interpolation** method t
 
 I have already discussed the implementation details of the cosine interpolator in the [value noise aricle](./valuenoise.md#how-is-it-generated), but just for quick comparison, the interpolation formula is the following:
 
-\\[ w = {1 - \cos{angle} \over 2} \\]
+$$
+w = \frac{1 - \cos{angle}}{2} }
+$$
+
 
 ```csharp
 // Given a point x between lattice start position x0 and lattice end position x1 ; with x0 < x < x1
