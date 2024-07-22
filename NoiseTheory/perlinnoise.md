@@ -68,22 +68,13 @@ To render value noise, I take advantage of the **cosine interpolation** method t
 
 I have already discussed the implementation details of the cosine interpolator in the [value noise aricle](./valuenoise.md#how-is-it-generated), but just for quick comparison, the interpolation formula is the following:
 
-$$
-w = \frac{1 - \cos{angle}}{2} }
-$$
-
-
-```csharp
-// Given a point x between lattice start position x0 and lattice end position x1 ; with x0 < x < x1
-// Given the values of noise y0 at x0  and y1 at x1
-// Given wavelength = length of the lattice = x1-x0
-
-normalized_position = mod(x, wavelength) /  wavelength     // ranges (0,1)
-angle = normalized_position * PI
-weight = (1 - cos(angle)) * 0.5
-
-value_at_x = y1 * (1-weight) + y0*weight
+```math
+angle = x_p * \Pi  \qquad ;x_p \in (0,1) \\[10pt]
+w = \frac{1 - \cos{(angle)}}{2} \\[10pt]
+y_p = y_1*(1-w) + y_0 * w
 ```
+
+
 
 ### Original Perlin Fade Function
 ### Improved Perlin Fade Function
