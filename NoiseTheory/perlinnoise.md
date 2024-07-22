@@ -1,10 +1,16 @@
+<script type="text/javascript"
+  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
 # Perlin Noise Basics (Very WIP)
 
 ## Table of Contents
 
 - [Perlin Noise](#perlin-noise)
     - [From wavelength to frequency](#from-wavelength-to-frequency)
-    - [From cosine interpolation to fade function](#from-cosine-interpolation-to-fade-function)
+    - [From cosine interpolation to fade functions](#from-cosine-interpolation-to-fade-functions)
+        - [Cosine interpolation](#cosine-interpolation)
+        - [Original Perlin Fade Function](#original-perlin-fade-function)
+        - [Improved Perlin Fade Function](#original-perlin-fade-function)
     - [2D Perlin Noise](#2d-perlin-noise)
     - [1D Perlin Noise](#1d-perlin-noise)
     - [Recap: Value Noise vs Perlin Noise](#recap-value-noise-vs-perlin-noise)
@@ -58,7 +64,30 @@ The reasons to use the frequency instead are manifold:
 
 I used the wavelenght concept when detailing the value noise because I found that it would be easier to relate to this kind of distance concept when talking about what was happening within the grid - but now that it is clear, it makes sense to switch to the nomenclature that is mostly used in almost every book and internet site. 
 
-## From cosine interpolation to fade function
+## From cosine interpolation to fade functions
+Another change that I am introducing in the Perlin noise with respect to the Value noise is the fade functions to interpolate values. When rendering Value noise, we do not have any interpolation alogrithm or fade function that is standard, we can choose any that fits our need, from the most basic linear interpolation to more advanced ones (see [interpolation](https://en.wikipedia.org/wiki/Interpolation) or [Paul bourke quick review](https://paulbourke.net/miscellaneous/interpolation/) which is succint and easy to understand). 
+### Cosine interpolation
+To render value noise, I take advantage of the **cosine interpolation** method to interpolate a function between two points. I opt for that method because consine interpolators only need 2 data points to interpolate the ones in the middle, it is fast and simple and it provides a much more smoother transition than the basic linear interpolator. 
+
+I have already discussed the implementation details of the cosine interpolator in the [value noise aricle](./valuenoise.md#how-is-it-generated), but just for quick comparison, the interpolation formula is the following:
+
+\\[ w = {1 - \cos{angle} \over 2} \\]
+
+```csharp
+// Given a point x between lattice start position x0 and lattice end position x1 ; with x0 < x < x1
+// Given the values of noise y0 at x0  and y1 at x1
+// Given wavelength = length of the lattice = x1-x0
+
+normalized_position = mod(x, wavelength) /  wavelength     // ranges (0,1)
+angle = normalized_position * PI
+weight = (1 - cos(angle)) * 0.5
+
+value_at_x = y1 * (1-weight) + y0*weight
+```
+
+### Original Perlin Fade Function
+### Improved Perlin Fade Function
+
 ## 2D Perlin Noise
 ## 1D Perlin Noise
     
