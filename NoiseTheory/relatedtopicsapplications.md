@@ -23,23 +23,43 @@
 
 When reviewing Value noise and Perlin noise, the use of interpolation methods  (or fade functions) is very important. They play a key role in one of the properties we are looking for in a noise function: **smoothness**.  
 
-I think it is good to 
+I think it is good to revisit these functions and understand them, where do they come from and why and how are they useful, as it is very likely that we use them in other scenarios that are not limited to the noise generation. 
 
-Another change that I am introducing in the Perlin noise with respect to the Value noise is the fade functions to interpolate values. When rendering Value noise, we do not have any interpolation alogrithm or fade function that is standard, we can choose any that fits our need, from the most basic linear interpolation to more advanced ones (see [interpolation](https://en.wikipedia.org/wiki/Interpolation) or [Paul bourke quick review](https://paulbourke.net/miscellaneous/interpolation/) which is succint and easy to understand). 
+An interpolation function can be defined as **a mathematical method to estimate or infer the value of a function at a given point `x_p` using other available values of this function at different points**. 
 
-In the discussion below, we will assume a 1D signal interpolation with the following notation:
+When generating noise, we use the interpolation method to find the values of all the positions inside a lattice (collection of `x_p`) using our available values of the function (the values of the noise at the lattice point).
+
+To explore what the interpolation methods are about, we will assume a 1D signal interpolation with the following notation:
 ```math
-(x_0, y_0) \qquad \text{The first interpolation point}
+(x_0, y_0) \qquad \text{The first interpolation point - lattice point}
 ```
 ```math
-(x_1, y_1) \qquad \text{The second interpolation point}
+(x_1, y_1) \qquad \text{The second interpolation point - 2nd lattice point}
 ```
 ```math
 (x_p, y_p) \qquad \text{The point to be interpolated}
 ```
+
+Let's review 4 interpolation methods, the *linear interpolation* which is most basic one, and the *cosine interpolator* and Perlin's fade functions. 
+
 ## Linear interpolation
 
-## Cosine interpolation (cosine fade function)
+Linear interpolation is the most basic interpolation method that provides continuous functions (the *nearest neighbor interpolator* is more basic but it yields non continuous signals). The basic assumption of this interpolator is that **the function we are trying to estimate is a line between two points**, so every estimated value will be in the line that goes between the first lattice value and the second:
+
+```math
+y_p = y_0 + (y_1 - y_0) \frac{x_p - x_0}{x_1 - x_0}
+```
+
+The linear interpolation function in the interval `(0,1)` looks like this:
+<div style="width:50%; margin: auto;">
+<p align="center" width='50%'>
+<img src="images/linearInterp.png" alt="Linear interpolation function" />
+</p>
+</div>
+
+
+
+## Cosine interpolation
 To render value noise, I take advantage of the **cosine interpolation** method to interpolate a function between two points. I opt for that method because consine interpolators only need 2 data points to interpolate the ones in the middle, it is fast and simple and it provides a much more smoother transition than the basic linear interpolator. 
 
 I have already discussed the implementation details of the cosine interpolator in the [value noise aricle](./valuenoise.md#how-is-it-generated), but just for quick comparison, the interpolation formula is the following:
@@ -56,7 +76,7 @@ y_p = y_1*(1-w) + y_0 * w
 The cosine interpolation function in the interval `(0,1)` looks like this:
 <div style="width:50%; margin: auto;">
 <p align="center" width='50%'>
-<img src="images/cosineInterp.png" alt="Interpolation of the first lattice of value noise" />
+<img src="images/cosineInterp.png" alt="Cosine interpolation function" />
 </p>
 </div>
 
@@ -75,7 +95,7 @@ The function looks very similar to the cosine interpolation function:
 
 <div style="width:50%; margin: auto;">
 <p align="center" width='50%'>
-<img src="images/perlinInterp.png" alt="Interpolation of the first lattice of value noise" />
+<img src="images/perlinInterp.png" alt="Ken Perlin's original fade function" />
 </p>
 </div>
 
@@ -92,6 +112,12 @@ Coding the fade function like this is efficient and does not use of any `cos` or
 The fade function though, does the trick, it provides results that depend only on two interpolation points and it also yields smooth transitions between lattices. 
 
 ## Improved Perlin Fade Function
+
+## Properties of the Fade Functions
+
+### First order derivative
+
+### Second order derivative
 
 
 # Composition and textures
