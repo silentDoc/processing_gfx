@@ -1,12 +1,12 @@
 # Related topics and Applications
-
+***
 ## Table of contents
 
 - [Interpolation and fade functions](#interpolation-and-fade-functions)
     - [Linear interpolation](#linear-interpolation)
     - [Cosine interpolation](#cosine-interpolation)
     - [Original Perlin Fade Function](#original-perlin-fade-function)
-    - [Improved Perlin Fade Function](#original-perlin-fade-function)
+    - [Improved Perlin Fade Function](improved-perlin-fade-function)
 
 - [Composition and textures](#composition-and-textures)
     - [Octaves](#octaves)
@@ -18,6 +18,8 @@
         - [Water](#water)
         - [Fire](#fire)
         - [Clouds](#clouds)
+
+***
 
 # Interpolation and Fade functions
 
@@ -31,16 +33,16 @@ When generating noise, we use the interpolation method to find the values of all
 
 To explore what the interpolation methods are about, we will assume a 1D signal interpolation with the following notation:
 ```math
-(x_0, y_0) \qquad \text{The first interpolation point - lattice point}
-```
-```math
-(x_1, y_1) \qquad \text{The second interpolation point - 2nd lattice point}
-```
-```math
-(x_p, y_p) \qquad \text{The point to be interpolated}
+\begin{aligned}
+(x_0, y_0) &\qquad \text{The first interpolation point - lattice point}
+\\[2ex]
+(x_1, y_1) &\qquad \text{The second interpolation point - 2nd lattice point}
+\\[2ex]
+(x_p, y_p) &\qquad \text{The point to be interpolated}
+\end{aligned}
 ```
 
-Let's review 4 interpolation methods, the *linear interpolation* which is most basic one, and the *cosine interpolator* and Perlin's fade functions. 
+Let's review 4 interpolation methods, the *linear interpolation* which is most basic one, and the *cosine interpolator* and Perlin's fade functions, that are the ones that are used to generate Value noise and Perlin noise. 
 
 ## Linear interpolation
 
@@ -65,13 +67,13 @@ To render value noise, I take advantage of the **cosine interpolation** method t
 I have already discussed the implementation details of the cosine interpolator in the [value noise aricle](./valuenoise.md#how-is-it-generated), but just for quick comparison, the interpolation formula is the following:
 
 ```math
-angle = x_p * \Pi  \qquad ;x_p \in (0,1)
-```
-```math
-w = \frac{1 - \cos{(angle)}}{2}
-```
-```math
-y_p = y_1*(1-w) + y_0 * w
+\begin{aligned}
+angle &= x_p * \Pi  \qquad \qquad ;x_p \in (0,1)
+\\[2ex]
+w &= \frac{1 - \cos{(angle)}}{2}
+\\[2ex]
+y_p &= y_0*(1-w) + y_1 * w
+\end{aligned}
 ```
 The cosine interpolation function in the interval `(0,1)` looks like this:
 <div style="width:50%; margin: auto;">
@@ -86,10 +88,11 @@ Notice how the function is not a straight line from 0 to 1, but is has some degr
 In his original article, Ken Perlin proposed the following fade function to be used along a linear interpolation. The function was really simple and looks like this:
 
 ```math
-w = 3x_p^2 - 2x_p^3 \qquad ;x_p \in (0,1)
-```
-```math
-y_p = y_1*(1-w) + y_0 * w
+\begin{aligned}
+w &= 3x_p^2 - 2x_p^3 \qquad \qquad ;x_p \in (0,1)
+\\[2ex]
+y_p &= y_0*(1-w) + y_1 * w
+\end{aligned}
 ```
 The function looks very similar to the cosine interpolation function:
 
@@ -119,7 +122,7 @@ The fade function though, does the trick, it provides results that depend only o
 
 ### Second order derivative
 
-
+***
 # Composition and textures
 
 

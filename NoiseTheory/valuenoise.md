@@ -1,5 +1,5 @@
 # Value Noise Basics
-
+***
 ## Table of Contents
 
 - [Value Noise](#value-noise)
@@ -18,7 +18,7 @@
 
 [Back to noise index](readme.md)
 
-<br/>
+***
 
 ## Value Noise
 
