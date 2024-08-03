@@ -30,7 +30,8 @@ plot(x, y_linear, 'k', 'linewidth',2);
 plot(x, y_cosine, 'r', 'linewidth',2);
 plot(x, y_perlin, 'b', 'linewidth',2);
 plot(x, y_perlinImproved, 'g', 'linewidth',2);
-
+h = legend ("Linear", "Cosine", "Perlin", "Perlin Imp", "location", "northwest");
+set (h, "fontsize", 20);
 hold off;
 
 
