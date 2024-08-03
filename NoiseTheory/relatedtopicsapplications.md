@@ -6,7 +6,12 @@
     - [Linear interpolation](#linear-interpolation)
     - [Cosine interpolation](#cosine-interpolation)
     - [Original Perlin Fade Function](#original-perlin-fade-function)
-    - [Improved Perlin Fade Function](improved-perlin-fade-function)
+    - [Improved Perlin Fade Function](#improved-perlin-fade-function)
+    - [Properties of the Fade Functions](#properties-of-the-fade-functions)
+        - [Number of necessary known values](#number-of-necessary-known-values)
+        - [First order derivative](#first-order-derivative)
+        - [Second order derivative](#second-order-derivative)
+    - [Comparison of interpolators](#comparison-of-interpolators)
 
 - [Composition and textures](#composition-and-textures)
     - [Octaves](#octaves)
@@ -102,7 +107,9 @@ The function looks very similar to the cosine interpolation function:
 </p>
 </div>
 
-Why did Ken Perlin come up with something so similar to existing interpolators? I guess the answer has to be computational efficiency. The original article is from the 80s and back then we were used to count processor cycles to speed up things ;). 
+Why did Ken Perlin come up with something so similar to existing interpolators?
+
+Aside from the properties of the function itself that will be reviewed lated, I guess the answer has to be computational efficiency. The original article is from the 80s and back then we were used to count processor cycles to speed up things ;). 
 
 Perlin original fade function can be computed like this:
 
@@ -112,15 +119,54 @@ fade = x*x * (3 - 2*x);
 ```
 Coding the fade function like this is efficient and does not use of any `cos` or other trigonometric programming instruction, wich were introduced in the 386 intel processor (after Perlin's article) and had to be solved using LUTs (indirecting memory was way slower than multiplying.)
 
-The fade function though, does the trick, it provides results that depend only on two interpolation points and it also yields smooth transitions between lattices. 
+The fade function though, does the trick, it provides results that depend only on two interpolation points and it also yields smooth transitions between lattices, and as you can observe the function output is almost identical to the cosine interpolator, yet much more efficient from a computation standpoint (especially in the 80s). 
 
 ## Improved Perlin Fade Function
 
+In his second article, _Improving Noise_, 2002, Perlin revisits his original algorithms and makes 2 substantial changes. The first one has to do with the gradients and noise generation and has been reviewed in th [Perlin noise entry](./perlinnoise.md), but the second is a replacement of his original fade function. 
+
+Perlin proposes:
+
+```math
+w = 6x_p^5 - 15x_p^4 + 10x_p^3 \qquad \qquad ;x_p \in (0,1)
+```
+instead of his original
+
+```math
+w = 3x_p^2 - 2x_p^3 \qquad \qquad \qquad ;x_p \in (0,1)
+```
+<br/>
+
+The motivation of this change is that Perlin observed that his original fade functions produced noise artifacts due to the properties of the second derivative of the original fade function, this will be detailed in the [properties subsection](#properties-of-the-fade-functions).
+
+The improved fade function looks very similar to the cosine and original interpolators, but it is a little bit more smoother on the values around 0 and 1.
+
+<div style="width:50%; margin: auto;">
+<p align="center" width='50%'>
+<img src="images/perlinImprovedInterp.png" alt="Ken Perlin's original fade function" />
+</p>
+</div>
+
+From a computation standpoint, this polynomic interpolator can also be optimized to compute fastly - but in 2002 (article date), the processor speeds were way faster than in the 80s, so there was no risk of performance hiccups. 
+
+Most of the implementations follow the same idea of the original fade function
+
+```csharp
+// 6x^5 - 15x^4 + 10x^3
+fade_improved = x*x*x * (10 + x*(-15 + 6*x));
+```
+
+Nowadays, it makes little sense to use the original fade function since the improved version has better properties and does not pose a problem from the performance point of view. 
+
 ## Properties of the Fade Functions
+
+### Number of necessary known values
 
 ### First order derivative
 
 ### Second order derivative
+
+## Comparison of interpolators
 
 ***
 # Composition and textures

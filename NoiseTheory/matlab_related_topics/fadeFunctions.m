@@ -10,7 +10,7 @@ y_perlinFadeImproved = (6 * x.^5) -  (15 * x.^4) +  (10 * x.^3);
 
 
 figure;
-plot(x, y_linearIntepr, 'r', 'linewidth', 3); title('Linear Interpolation'); axis square;
+plot(x, y_perlinFadeImproved, 'r', 'linewidth', 3); title('Perlin Improved Fade Function'); axis square;
 
 
 figure;
