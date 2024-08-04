@@ -7,8 +7,9 @@
     - [Cosine interpolation](#cosine-interpolation)
     - [Original Perlin Fade Function](#original-perlin-fade-function)
     - [Improved Perlin Fade Function](#improved-perlin-fade-function)
-    - [Properties of the Fade Functions](#properties-of-the-fade-functions)
+    - [Properties](#properties)
         - [Number of necessary known values](#number-of-necessary-known-values)
+        - [Scope, Range and an example](#scope-range-and-an-example)
         - [First order derivative](#first-order-derivative)
         - [Second order derivative](#second-order-derivative)
     - [Comparison of interpolators](#comparison-of-interpolators)
@@ -90,7 +91,7 @@ The cosine interpolation function in the interval `(0,1)` looks like this:
 Notice how the function is not a straight line from 0 to 1, but is has some degree of curve provided by the trigonometric function. That curve is the smooth factor that we can see in transition between lattices in our noise. 
 
 ## Original Perlin Fade Function
-In his original article, Ken Perlin proposed the following fade function to be used along a linear interpolation. The function was really simple and looks like this:
+In his original article, Ken Perlin **proposed the following fade function to be used along a linear interpolation**. The function was really simple and looks like this:
 
 ```math
 \begin{aligned}
@@ -100,12 +101,13 @@ y_p &= y_0*(1-w) + y_1 * w
 \end{aligned}
 ```
 The function looks very similar to the cosine interpolation function:
-
 <div style="width:50%; margin: auto;">
 <p align="center" width='50%'>
 <img src="images/perlinInterp.png" alt="Ken Perlin's original fade function" />
 </p>
 </div>
+
+The motivation of such a proposal was to find resulting signals that were smooth when transitioning from one point to another in contrast to the results provided by the linear interpolator. The fade function can be seen as a correcting factor of the linear value that ensures such smoothness.
 
 Why did Ken Perlin come up with something so similar to existing interpolators?
 
@@ -139,13 +141,19 @@ w = 3x_p^2 - 2x_p^3 \qquad \qquad \qquad ;x_p \in (0,1)
 
 The motivation of this change is that Perlin observed that his original fade functions produced noise artifacts due to the properties of the second derivative of the original fade function, this will be detailed in the [properties subsection](#properties-of-the-fade-functions).
 
-The improved fade function looks very similar to the cosine and original interpolators, but it is a little bit more smoother on the values around 0 and 1.
+The application of the fade function is exactly the same:
 
+```math
+y_p = y_0*(1-w) + y_1 * w
+```
+
+The improved fade function looks very similar to the cosine and original interpolators, but it is a little bit more smoother on the values around 0 and 1.
 <div style="width:50%; margin: auto;">
 <p align="center" width='50%'>
-<img src="images/perlinImprovedInterp.png" alt="Ken Perlin's original fade function" />
+<img src="images/perlinImprovedInterp.png" alt="Ken Perlin's improved fade function" />
 </p>
 </div>
+
 
 From a computation standpoint, this polynomic interpolator can also be optimized to compute fastly - but in 2002 (article date), the processor speeds were way faster than in the 80s, so there was no risk of performance hiccups. 
 
@@ -158,11 +166,108 @@ fade_improved = x*x*x * (10 + x*(-15 + 6*x));
 
 Nowadays, it makes little sense to use the original fade function since the improved version has better properties and does not pose a problem from the performance point of view. 
 
-## Properties of the Fade Functions
+## Properties
 
 ### Number of necessary known values
+In order to be able to produce noise signals as we do in the value noise and Perlin noise case, **we need interpolation methods that allow us to yeld value from only a pair of lattice values** - basically the initial and final value. 
+
+There are higher order interpolators (such as splines, cubic, hermite, etc..) that provide smoother results taking into account more context, but they need more lattic points and involve more computation. 
+
+### Scope, Range and an example
+Notice as well that the inteporlators are defined in a scope between **0 and 1**. The **range** of the interpolation function is $w \isin [0,1]$, strictly increasing. 
+
+When we want to find a value $x_p$ that is contained between the first lattice point and the second, *we use the fade function to know how much does each lattice point influence the value we are trying to find*.
+
+Inspecting the intepolation function it is easy to see what are we doing here:
+
+```math
+y_p = y_0*(1-w) + y_1 * w
+```
+
+What we are saying here is that a value $y_p$ is a linear combination of the lattice value $y_1$ influenced by $w$ and the lattice value $y_0$ influenced by the complementary of $w$, that is $(1-w)$.
+
+$w$ and $(1-w)$ are weight factors that add up to 1, obvioulsy, and that can be seen a the _percentage_ that each lattice point influences on the final value $y_p$. That influence is dictated by $x_p$, that is to say, from the distance of the point to be estimated to each of the lattice values. 
+
+Take this example where I will be interpolating a value using the Perlin original fade function, step by step:
+
+<div style="width:75%; margin: auto;">
+<p align="center" width='50%'>
+<img src="images/interpInfluence.png" alt="Cosine interpolation function" />
+</p>
+</div>
+
+We have two lattice points:
+
+```math
+\begin{aligned}
+(x_0, y_0) &= (0,8)
+\\[2ex]
+(x_1, y_1) &= (5,15)
+\end{aligned}
+```
+And we want to interpolate the value at $x = 2$ using the Perlin original fade function. 
+
+This interpolation is a value $y$ that results from the influence of $y_0$ and $y_1$. The amount of influence each value has depends on the x-position of $x$, the closer the x-position is to a lattice point, the more influence it will have on the interpolated value. 
+
+In this case we have $x=2$. The lattice segment is defined between 0 and 5, so 2 is closer to 0 than it is to 5, therefore the first lattice point $(0,8)$ should have more influence to the result than the second, $(5,15)$.
+
+Let's see. The first step is to normalize $x$ in order to find $x_p$. 
+
+```math
+\begin{aligned}
+x_p &= x / (x_1-x_0)
+\\[2ex]
+x_p &= 2 / (5-0)
+\\[2ex]
+x_p &= 0,4
+\end{aligned}
+```
+With $x_p$ we can now find $w$ with Perlin Fade function:
+```math
+\begin{aligned}
+w &= 3 * x_p^2 - 2* x_p^3
+\\[2ex]
+w &= 3 * (0,4)^2 - 2* (0,4)^3
+\\[2ex]
+w &= 0,352
+\end{aligned}
+```
+
+We only have to interpolate the value taking into account the weight we just found. Notice that in the formula we have:
+
+```math
+y_p = y_0*(1-w) + y_1 * w
+```
+
+We could state this:
+```math
+y_p = y_0*\text{ (influence of first lattice)} + y_1 * \text{ (influence of second lattice)}
+```
+
+So you can see how $w$ tunes the influence of each value of the lattice points in the final result. Since we know that $x = 2$ is closer to $x_0$ than it is to $x_1$, the influence of the first lattice should be greater. Let's check it out.
+```math
+\begin{aligned}
+\text{ (influence of first lattice)} &= (1-w) = 1-0,352 = 0,648
+\\[2ex]
+\text{ (influence of second lattice)} &= w = 0,352
+\end{aligned}
+```
+Finally, the $y$ value for $x=2$ is yielded. 
+```math
+\begin{aligned}
+y_p &= y_0*(1-w) + y_1 * w
+\\[2ex]
+y_p &= 8*0,648 + 15 * 0,352
+\\[2ex]
+y_p &= 10,464
+\end{aligned}
+```
+You can easily see how an interpolated value is nothing more than a weighted computation of a value from the influence of its lattice points (hence the letter $w$ for $weight$ in the fade functions).
+
 
 ### First order derivative
+
+
 
 ### Second order derivative
 
