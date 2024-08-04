@@ -196,6 +196,11 @@ Take this example where I will be interpolating a value using the Perlin origina
 </p>
 </div>
 
+```
+The steps of this example can be found at: 
+matlab_related_topics folder/sampleInterpScopeRange.m 
+```
+
 We have two lattice points:
 
 ```math
@@ -266,8 +271,66 @@ You can easily see how an interpolated value is nothing more than a weighted com
 
 
 ### First order derivative
+The first order derivative of a function tells us if a function increases, decreases or has a local maxima/minima (doesn't increase or decrease) at a given point. This is very important for the **smoothness** property of our interpolation, because in order to yield continuous and smooth results when interpolating values and **especially when transitioning from a lattice to the next** we want the interpolation function to have a **0 valued first order derivative** at the transition points. 
 
+Let's study which are the derivatives of our functions:
 
+**Cosine interpolator**:
+
+- Function: $w = \frac{1 - \cos{(x_p * \pi)}}{2}$
+- First order derivative: $w' = \frac{\pi\sin{(x_p * \pi)}}{2}$
+
+Evaluation of $w'$ at 0 and 1 (remember that our fade functions are defined for the normalized range $x \isin [0,1]$):
+```math
+\begin{aligned}
+w' &= \frac{\pi\sin{(x_p * \pi)}}{2}
+\\[2ex]
+&\text{Evaluate at values x=0 and x=1}
+\\[2ex]
+w'(0) &= \frac{\pi\sin{(0)}}{2} = 0
+\\[2ex]
+w'(1) &= \frac{\pi\sin{(\pi)}}{2} = 0
+\end{aligned}
+```
+We can see that the interpolation function first order derivative is 0 in the edges where the function is defined. That ensures that lattices connect in conditions where the fade function does not increase nor decrease, ensuring that there is smoothness and continuity, without bad looking results where we get chunks that are increasing connected to chunks that are decreasing (something we see in the linear interpolator).
+
+**Perlin Original Fade Function**:
+
+- Function: $w = 3  x_p^2 - 2 x_p^3$
+- First order derivative: $w' = 6x_p - 6x_p^2$
+
+Evaluation of $w'$ at 0 and 1 (remember that our fade functions are defined for the normalized range $x \isin [0,1]$):
+```math
+\begin{aligned}
+w' &= 6x_p - 6x_p^2
+\\[2ex]
+&\text{Evaluate at values x=0 and x=1}
+\\[2ex]
+w'(0) &= 6*0 - 6*0 = 0
+\\[2ex]
+w'(1) &= 6*1 - 6*1 = 0
+\end{aligned}
+```
+We can see the same case with the Perlin original fade function.
+
+**Perlin Improved Fade Function**:
+
+- Function: $w = 6x_p^5 - 15x_p^4 + 10x_p^3$
+- First order derivative: $w' = 30x_p^4 - 60x_p^3 + 30x_p^2$
+
+Evaluation of $w'$ at 0 and 1 (remember that our fade functions are defined for the normalized range $x \isin [0,1]$):
+```math
+\begin{aligned}
+w' &= 30x_p^4 - 60x_p^3 + 30x_p^2
+\\[2ex]
+&\text{Evaluate at values x=0 and x=1}
+\\[2ex]
+w'(0) &= 30*0 - 60*0 + 30*0= 0
+\\[2ex]
+w'(1) &= 30*1 - 60*1 + 30*1= 0
+\end{aligned}
+```
+Finally, we also see that the Perlin improved function also has a 0-valued first order derivative for $x_p = 0$ and $x_p = 1$.
 
 ### Second order derivative
 
