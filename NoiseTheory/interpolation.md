@@ -1,34 +1,21 @@
-# Related topics and Applications
-***
-## Table of contents
-
-- [Interpolation and fade functions](#interpolation-and-fade-functions)
-    - [Linear interpolation](#linear-interpolation)
-    - [Cosine interpolation](#cosine-interpolation)
-    - [Original Perlin Fade Function](#original-perlin-fade-function)
-    - [Improved Perlin Fade Function](#improved-perlin-fade-function)
-    - [Properties](#properties)
-        - [Number of necessary known values](#number-of-necessary-known-values)
-        - [Scope, Range and an example](#scope-range-and-an-example)
-        - [First order derivative](#first-order-derivative)
-        - [Second order derivative](#second-order-derivative)
-    - [Comparison of interpolators](#comparison-of-interpolators)
-
-- [Composition and textures](#composition-and-textures)
-    - [Octaves](#octaves)
-    - [Fractality](#fractality)
-    - [Textures from noise](#textures-from-noise)
-        - [Turbulence](#turbulence)
-        - [Marble](#marble)
-        - [Wood](#wood)
-        - [Water](#water)
-        - [Fire](#fire)
-        - [Clouds](#clouds)
-
-***
-
 # Interpolation and Fade functions
 
+***
+## Table of contents
+- [Intro](#intro)
+- [Linear interpolation](#linear-interpolation)
+- [Cosine interpolation](#cosine-interpolation)
+- [Original Perlin Fade Function](#original-perlin-fade-function)
+- [Improved Perlin Fade Function](#improved-perlin-fade-function)
+- [Properties](#properties)
+    - [Number of necessary known values](#number-of-necessary-known-values)
+    - [Scope, Range and an example](#scope-range-and-an-example)
+    - [First order derivative](#first-order-derivative)
+    - [Second order derivative](#second-order-derivative)
+- [Comparison of interpolators](#comparison-of-interpolators)
+
+***
+# Intro
 When reviewing Value noise and Perlin noise, the use of interpolation methods  (or fade functions) is very important. They play a key role in one of the properties we are looking for in a noise function: **smoothness**.  
 
 I think it is good to revisit these functions and understand them, where do they come from and why and how are they useful, as it is very likely that we use them in other scenarios that are not limited to the noise generation. 
@@ -50,7 +37,7 @@ To explore what the interpolation methods are about, we will assume a 1D signal 
 
 Let's review 4 interpolation methods, the *linear interpolation* which is most basic one, and the *cosine interpolator* and Perlin's fade functions, that are the ones that are used to generate Value noise and Perlin noise. 
 
-## Linear interpolation
+# Linear interpolation
 
 Linear interpolation is the most basic interpolation method that provides continuous functions (the *nearest neighbor interpolator* is more basic but it yields non continuous signals). The basic assumption of this interpolator is that **the function we are trying to estimate is a line between two points**, so every estimated value will be in the line that goes between the first lattice value and the second:
 
@@ -67,7 +54,7 @@ The linear interpolation function in the interval `(0,1)` looks like this:
 
 
 
-## Cosine interpolation
+# Cosine interpolation
 To render value noise, I take advantage of the **cosine interpolation** method to interpolate a function between two points. I opt for that method because consine interpolators only need 2 data points to interpolate the ones in the middle, it is fast and simple and it provides a much more smoother transition than the basic linear interpolator. 
 
 I have already discussed the implementation details of the cosine interpolator in the [value noise aricle](./valuenoise.md#how-is-it-generated), but just for quick comparison, the interpolation formula is the following:
@@ -90,7 +77,7 @@ The cosine interpolation function in the interval `(0,1)` looks like this:
 
 Notice how the function is not a straight line from 0 to 1, but is has some degree of curve provided by the trigonometric function. That curve is the smooth factor that we can see in transition between lattices in our noise. 
 
-## Original Perlin Fade Function
+# Original Perlin Fade Function
 In his original article, Ken Perlin **proposed the following fade function to be used along a linear interpolation**. The function was really simple and looks like this:
 
 ```math
@@ -123,7 +110,7 @@ Coding the fade function like this is efficient and does not use of any `cos` or
 
 The fade function though, does the trick, it provides results that depend only on two interpolation points and it also yields smooth transitions between lattices, and as you can observe the function output is almost identical to the cosine interpolator, yet much more efficient from a computation standpoint (especially in the 80s). 
 
-## Improved Perlin Fade Function
+# Improved Perlin Fade Function
 
 In his second article, _Improving Noise_, 2002, Perlin revisits his original algorithms and makes 2 substantial changes. The first one has to do with the gradients and noise generation and has been reviewed in th [Perlin noise entry](./perlinnoise.md), but the second is a replacement of his original fade function. 
 
@@ -166,14 +153,14 @@ fade_improved = x*x*x * (10 + x*(-15 + 6*x));
 
 Nowadays, it makes little sense to use the original fade function since the improved version has better properties and does not pose a problem from the performance point of view. 
 
-## Properties
+# Properties
 
-### Number of necessary known values
+## Number of necessary known values
 In order to be able to produce noise signals as we do in the value noise and Perlin noise case, **we need interpolation methods that allow us to yeld value from only a pair of lattice values** - basically the initial and final value. 
 
 There are higher order interpolators (such as splines, cubic, hermite, etc..) that provide smoother results taking into account more context, but they need more lattic points and involve more computation. 
 
-### Scope, Range and an example
+## Scope, Range and an example
 Notice as well that the inteporlators are defined in a scope between **0 and 1**. The **range** of the interpolation function is $w \isin [0,1]$, strictly increasing. 
 
 When we want to find a value $x_p$ that is contained between the first lattice point and the second, *we use the fade function to know how much does each lattice point influence the value we are trying to find*.
@@ -270,12 +257,12 @@ y_p &= 10,464
 You can easily see how an interpolated value is nothing more than a weighted computation of a value from the influence of its lattice points (hence the letter $w$ for $weight$ in the fade functions).
 
 
-### First order derivative
+## First order derivative
 The first order derivative of a function tells us if a function increases, decreases or has a local maxima/minima (doesn't increase or decrease) at a given point. This is very important for the **smoothness** property of our interpolation, because in order to yield continuous and smooth results when interpolating values and **especially when transitioning from a lattice to the next** we want the interpolation function to have a **0 valued first order derivative** at the transition points. 
 
 Let's study which are the derivatives of our functions:
 
-**Cosine interpolator**:
+### Cosine interpolator
 
 - Function: $w = \frac{1 - \cos{(x_p * \pi)}}{2}$
 - First order derivative: $w' = \frac{\pi\sin{(x_p * \pi)}}{2}$
@@ -294,7 +281,7 @@ w'(1) &= \frac{\pi\sin{(\pi)}}{2} = 0
 ```
 We can see that the interpolation function first order derivative is 0 in the edges where the function is defined. That ensures that lattices connect in conditions where the fade function does not increase nor decrease, ensuring that there is smoothness and continuity, without bad looking results where we get chunks that are increasing connected to chunks that are decreasing (something we see in the linear interpolator).
 
-**Perlin Original Fade Function**:
+### Perlin Original Fade Function
 
 - Function: $w = 3  x_p^2 - 2 x_p^3$
 - First order derivative: $w' = 6x_p - 6x_p^2$
@@ -313,7 +300,7 @@ w'(1) &= 6*1 - 6*1 = 0
 ```
 We can see the same case with the Perlin original fade function.
 
-**Perlin Improved Fade Function**:
+### Perlin Improved Fade Function
 
 - Function: $w = 6x_p^5 - 15x_p^4 + 10x_p^3$
 - First order derivative: $w' = 30x_p^4 - 60x_p^3 + 30x_p^2$
@@ -332,78 +319,6 @@ w'(1) &= 30*1 - 60*1 + 30*1= 0
 ```
 Finally, we also see that the Perlin improved function also has a 0-valued first order derivative for $x_p = 0$ and $x_p = 1$.
 
-### Second order derivative
+## Second order derivative
 
-## Comparison of interpolators
-
-***
-# Composition and textures
-
-
-## Octaves
-
-In most of the articles online, frequency is used to talk about noise and octaves, so just be aware that frequency is just another way to refer to wavelength. Now on to octaves.
-
-Each octave represents a noise function at a different frequency and amplitude. Higher-frequency (lower wavelength) octaves have more rapid changes in values, while lower-frequency (higher wavelength) octaves have smoother transitions. Similarly, higher-amplitude octaves contribute more to the overall noise function's amplitude, while lower-amplitude octaves have less influence.
-
-The term "octave" originates from music theory, where octaves represent doubling or halving of frequency. In the context of noise functions, each octave typically has a frequency that is twice that of the previous octave, and its amplitude is typically halved. This scaling allows for the creation of noise functions with a wide range of scales and levels of detail.
-
-To generate fractal noise, multiple octaves of a base noise function (e.g., Perlin noise or value noise) are combined by adding them together. The contribution of each octave is determined by its **frequency**, **amplitude**, and **persistence** (a factor controlling how quickly the amplitude decreases with each successive octave).
-
-In order to generate a composition of noise from octaves, we generally do the following (pseudocode):
-
-```csharp
-int initial_frequency   // Starting frquency (wavelength)
-int intial_amplitude    // Starting amplitude
-int persistance         // Factor that is applied between octaves 
-int num_octaves         // number of octaves to calculate
-
-int num_Points          // The number of points in the sequence. Ideally numPoints >>> wavelength
-int[] yValues           // The array that will store the values of the curve
-
-int frequency = initial_frequency
-int amplitude = initial_amplitude
-
-for(int octave = 0; octave < num_octaves; octave++)
-{
-   int[] octave_noise = noise(num_Points, frequency, amplitude)   
-
-   yValues   += octave_noise    // This is an actual sum by elements
-   frequency *= persistance
-   amplitude /= persistance
-}
-
-return yValues;
-```
-## Fractality
-
-The resulting noise function from combining a set of octaves is called **Fractal Browsian noise (fBn)**
-
-Fractal Brownian Noise (fBm) is a type of fractal noise that is commonly used in computer graphics, procedural generation, and simulations to generate complex and realistic-looking textures, terrains, and patterns. It is an extension of Perlin/Value noise and other types of gradient noise.
-
-Here's a breakdown of the key characteristics and components of Fractal Brownian Noise:
-
-- **Fractal Nature:**
-Fractal Brownian Noise exhibits self-similarity across multiple scales, meaning that the noise pattern looks similar regardless of the level of detail at which it is viewed.
-This self-similarity allows for the creation of natural-looking textures and terrains with intricate detail.
-- **Brownian Motion:**
-Fractal Brownian Noise is based on the concept of Brownian motion, which describes the random movement of particles in a fluid or gas. In the context of noise generation, Brownian motion refers to the cumulative effect of combining multiple layers (octaves) of noise with varying frequencies and amplitudes.
-- **Octaves:**
-Fractal Brownian Noise combines multiple octaves of a base noise function, such as Perlin noise or value noise.
-Each octave represents a layer of noise with a different frequency and amplitude. Higher-frequency octaves contribute fine detail to the overall noise pattern, while lower-frequency octaves contribute broader features.
-- **Persistence:**
-Persistence is a parameter that controls the influence of each successive octave on the final noise output. A higher persistence value results in stronger influence from higher-frequency octaves, leading to more detailed and "noisy" output. Lower persistence values produce smoother noise patterns with less high-frequency detail.
-- **Generation Process:**
-Fractal Brownian Noise is generated by summing together multiple octaves of noise, each scaled by a factor determined by its frequency and persistence. The noise values from each octave are added together to produce the final output, which exhibits characteristics of both randomness and structure.
-
-In summary, Fractal Brownian Noise is a type of fractal noise that combines multiple layers of noise with varying frequencies and amplitudes to create complex, self-similar patterns.
-
-
-## Textures from noise
-
-### Turbulence
-### Marble
-### Wood
-### Water
-### Fire
-### Clouds
+# Comparison of interpolators
