@@ -50,22 +50,29 @@ We will focus on **value noise** and **perlin noise** in this document as they p
 
 ## Value Noise
 
-This section is placed on a [dedicated file](valuenoise.md)
+This section is placed on a [dedicated file](value_noise.md)
 
 ## Perlin Noise
 
-This section is also placed on a [dedicated file](perlinnoise.md) (WIP)
+This section is also placed on a [dedicated file](perlin_noise.md) (WIP)
 
-## Related topics and applications
+## Related topics
 
-In this section we detail how the **interpolation methods** work and their properties, as they are key factors to yield continuous and smooth noise signals. 
+### Interpolation insights
 
-In the second part, examples on how to generate textures using noise is also provided. 
+In this section we detail how the **interpolation methods and fade function** work and their properties, as they are key factors to yield continuous and smooth noise signals. 
 
 This section is also placed on a [dedicated file](relatedtopicsapplications.md) (WIP)
 
+### Composition and Textures
+
+Noise signals and the ability to compose several of them together, along with other math function signals open a lot of possibilities in form of terrain generation, textures and other things. 
+
+I review the ones proposed by Perlin in a [dedicated file](composition_and_textures.md) (WIP)
 
 ## Noise in Processing
+
+Finally, a review on how to use the built in noise function in processing is also provided [here](noise_in_processing.md) (WIP)
 
 ## Sources and articles
 
