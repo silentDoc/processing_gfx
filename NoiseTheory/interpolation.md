@@ -177,7 +177,7 @@ $w$ and $(1-w)$ are weight factors that add up to 1, obvioulsy, and that can be 
 
 Take this example where I will be interpolating a value using the Perlin original fade function, step by step:
 
-<div style="width:75%; margin: auto;">
+<div style="width:50%; margin: auto;">
 <p align="center" width='50%'>
 <img src="images/interpInfluence.png" alt="Cosine interpolation function" />
 </p>
@@ -265,7 +265,8 @@ Let's study which are the derivatives of our functions:
 ### Cosine interpolator
 
 - Function: $w = \frac{1 - \cos{(x_p * \pi)}}{2}$
-- First order derivative: $w' = \frac{\pi\sin{(x_p * \pi)}}{2}$
+<br/>
+- **First order derivative:** $w' = \frac{\pi\sin{(x_p * \pi)}}{2}$
 
 Evaluation of $w'$ at 0 and 1 (remember that our fade functions are defined for the normalized range $x \isin [0,1]$):
 ```math
@@ -284,7 +285,8 @@ We can see that the interpolation function first order derivative is 0 in the ed
 ### Perlin Original Fade Function
 
 - Function: $w = 3  x_p^2 - 2 x_p^3$
-- First order derivative: $w' = 6x_p - 6x_p^2$
+<br/>
+- **First order derivative:** $w' = 6x_p - 6x_p^2$
 
 Evaluation of $w'$ at 0 and 1 (remember that our fade functions are defined for the normalized range $x \isin [0,1]$):
 ```math
@@ -303,7 +305,8 @@ We can see the same case with the Perlin original fade function.
 ### Perlin Improved Fade Function
 
 - Function: $w = 6x_p^5 - 15x_p^4 + 10x_p^3$
-- First order derivative: $w' = 30x_p^4 - 60x_p^3 + 30x_p^2$
+<br/>
+- **First order derivative:** $w' = 30x_p^4 - 60x_p^3 + 30x_p^2$
 
 Evaluation of $w'$ at 0 and 1 (remember that our fade functions are defined for the normalized range $x \isin [0,1]$):
 ```math
@@ -320,6 +323,100 @@ w'(1) &= 30*1 - 60*1 + 30*1= 0
 Finally, we also see that the Perlin improved function also has a 0-valued first order derivative for $x_p = 0$ and $x_p = 1$.
 
 ## Second order derivative
+
+The second order derivative tells us which is the rate change of the first order derivative of a function. The best way to understand it is to think about kinematics in physics: the original function would tell us the position in time (space), the first order derivative yields the _velocity_ formula, and the second order derivative yields the _acceleration_, that is the change rate of the velocity. 
+
+When we use a fade function that has a second order derivative that equals 0 for the $x$ values 0 and 1, we have a function that not only yields smooth results, but produces less artifacts, as it was demonstrated by Perlin in his second paper, and this was the main motivation to introduce his new fade function when revisiting his algorithm. 
+
+We will see that not all the interpolators we have reviewed have a good second order derivative. 
+
+```
+The calculation of the functions below and graphs can be seen at
+matlab_interpolation folder/fadeDerivatives.m 
+```
+
+### Cosine interpolator
+
+- Function: $w = \frac{1 - \cos{(x_p * \pi)}}{2}$
+- First order derivative: $w' = \frac{\pi\sin{(x_p * \pi)}}{2}$
+<br/>
+- **Second order derivative:** $w'' = \frac{\pi^{2} \cos{(\pi x_{p})}}{2}$
+
+
+Evaluation of $w''$ at 0 and 1 (remember that our fade functions are defined for the normalized range $x \isin [0,1]$):
+```math
+\begin{aligned}
+w' &= \frac{\pi^{2} \cos{(\pi x_{p})}}{2}
+\\[2ex]
+&\text{Evaluate at values x=0 and x=1}
+\\[2ex]
+w'(0) &= \frac{\pi^{2} \cos{(0)}}{2} = \frac{1}{2}
+\\[2ex]
+w'(1) &= \frac{\pi^2\cos{(\pi)}}{2} = -\frac{1}{2}
+\end{aligned}
+```
+
+<div style="width:50%; margin: auto;">
+<p align="center" width='50%'>
+<img src="images/cosineInterpDerivatives.png" alt="Cosine interpolator and its first and second order derivatives." />
+</p>
+</div>
+
+The cosine interpolator has a second order derivative that is not 0 for the values $x=0$ and $x=1$, so it is likely to produce artifacts. 
+
+### Perlin Original Fade Function
+
+- Function: $w = 3  x_p^2 - 2 x_p^3$
+- First order derivative: $w' = 6x_p - 6x_p^2$
+<br/>
+- **Second order derivative:** $w'' = 6 - 12x_p$
+
+Evaluation of $w'$ at 0 and 1 (remember that our fade functions are defined for the normalized range $x \isin [0,1]$):
+```math
+\begin{aligned}
+w' &= 6x_p - 6x_p^2
+\\[2ex]
+&\text{Evaluate at values x=0 and x=1}
+\\[2ex]
+w'(0) &= 6*0 - 6*0 = 0
+\\[2ex]
+w'(1) &= 6*1 - 6*1 = 0
+\end{aligned}
+```
+<div style="width:50%; margin: auto;">
+<p align="center" width='50%'>
+<img src="images/perlinInterpDerivatives.png" alt="Perlin original fade function and its first and second order derivatives." />
+</p>
+</div>
+
+With the original Perlin fade function, we see similar results and features we have with the cosine interpolator. Although faster, the results we get with the original Perlin fade function will be somewhat similar to the ones yielded by the cosine interpolator. 
+
+### Perlin Improved Fade Function
+
+- Function: $w = 6x_p^5 - 15x_p^4 + 10x_p^3$
+- First order derivative: $w' = 30x_p^4 - 60x_p^3 + 30x_p^2$
+<br/>
+- **Second order derivative**: $w'' = 120x_p^3 - 180x_p^2 + 60x_p$
+
+Evaluation of $w'$ at 0 and 1 (remember that our fade functions are defined for the normalized range $x \isin [0,1]$):
+```math
+\begin{aligned}
+w' &= 30x_p^4 - 60x_p^3 + 30x_p^2
+\\[2ex]
+&\text{Evaluate at values x=0 and x=1}
+\\[2ex]
+w'(0) &= 30*0 - 60*0 + 30*0= 0
+\\[2ex]
+w'(1) &= 30*1 - 60*1 + 30*1= 0
+\end{aligned}
+```
+<div style="width:50%; margin: auto;">
+<p align="center" width='50%'>
+<img src="images/perlinImprovedInterpDerivatives.png" alt="Perlin Improved fade function and its first and second order derivatives." />
+</p>
+</div>
+
+With the improved Perlin fade function, however, the second order derivative evaluates to 0 for both $x=0$ and $x=1$. We will see in the next section how the use of this interpolator can produce better results than the previous ones, as claimed by the author himself.
 
 # Comparison of interpolators
 
