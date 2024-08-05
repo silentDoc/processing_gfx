@@ -1,13 +1,14 @@
 # Noise
-***
 ## Table of Contents
 
 - [What is Noise?](#what-is-noise)
     - [Noise Types](#noise-types)
-- [Value Noise](valuenoise.md)
-- [Perlin Noise](perlinnoise.md)
-- [Related topics and applications](relatedtopicsapplications.md)
-- [Noise in _Processing_](#noise-in-processing)
+- [Value Noise](value_noise.md)
+- [Perlin Noise](perlin_noise.md)
+- [Related topics](#related-topics)
+    - [Interpolation insights](interpolation.md)
+    - [Composition and textures](composition_and_textures.md)
+- [Noise in _Processing_](noise_in_processing.md)
 - [Sources and Articles](#sources-and-articles)
 
 ***    
@@ -62,7 +63,7 @@ This section is also placed on a [dedicated file](perlin_noise.md) (WIP)
 
 In this section we detail how the **interpolation methods and fade function** work and their properties, as they are key factors to yield continuous and smooth noise signals. 
 
-This section is also placed on a [dedicated file](relatedtopicsapplications.md) (WIP)
+This section is also placed on a [dedicated file](interpolation.md) (WIP)
 
 ### Composition and Textures
 

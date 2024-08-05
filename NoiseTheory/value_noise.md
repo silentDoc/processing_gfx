@@ -506,4 +506,6 @@ We have also seen the concepts of wavelength and amplitude of noise, and that se
 
 The value noise is probably the easier one to implement and understand, and its basics should be useful to proceed to **Perlin noise** which is probably the _de facto standard_ that most shaders and programs provide. 
 
+***
+[Back to top](#table-of-contents)
 [Back to noise index](readme.md)
