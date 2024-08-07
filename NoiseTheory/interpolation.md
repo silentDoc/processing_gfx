@@ -13,6 +13,7 @@
     - [First order derivative](#first-order-derivative)
     - [Second order derivative](#second-order-derivative)
 - [Comparison of interpolators](#comparison-of-interpolators)
+- [2D Interpolation (bilinear)](#2d-interpolation-bilinear)
 
 ***
 # Intro
@@ -52,7 +53,7 @@ The linear interpolation function in the interval `(0,1)` looks like this:
 </p>
 </div>
 
-
+This interpolator provides **bad results** in terms of smoothness. Its use is not recommended, but it serves as a starting point to review the methods we will consider.
 
 # Cosine interpolation
 To render value noise, I take advantage of the **cosine interpolation** method to interpolate a function between two points. I opt for that method because consine interpolators only need 2 data points to interpolate the ones in the middle, it is fast and simple and it provides a much more smoother transition than the basic linear interpolator. 
@@ -332,7 +333,7 @@ We will see that not all the interpolators we have reviewed have a good second o
 
 ```
 The calculation of the functions below and graphs can be seen at
-matlab_interpolation folder/fadeDerivatives.m 
+matlab_interpolation/fadeDerivatives.m 
 ```
 
 ### Cosine interpolator
@@ -419,6 +420,135 @@ w'(1) &= 30*1 - 60*1 + 30*1= 0
 With the improved Perlin fade function, however, the second order derivative evaluates to 0 for both $x=0$ and $x=1$. We will see in the next section how the use of this interpolator can produce better results than the previous ones, as claimed by the author himself.
 
 # Comparison of interpolators
+```
+The comparison next and graphs can be found at the matlab script
+matlab_interpolation/fadeFunctions.m and matlab_interpolation/interpComparison.m 
+```
+
+Let's first show the interpolators jointly in the same image:
+
+<div style="width:50%; margin: auto;">
+<p align="center" width='50%'>
+<img src="images/interpolatorsComp1.png" alt="Reviewed interpolators head to head." />
+</p>
+</div>
+
+<div style="margin: auto;">
+<p align="center">
+<img src="images/interpolatorsComp2.png" alt="Reviewed interpolators head to head." />
+</p>
+</div>
+
+<div style="margin: auto;">
+<p align="center">
+<img src="images/interpolatorsComp3.png" alt="Reviewed interpolators head to head." />
+</p>
+</div>
+
+<div style="margin: auto;">
+<p align="center">
+<img src="images/interpolatorsComp3Zoom.png" alt="Reviewed interpolators head to head." />
+</p>
+</div>
+
+<div style="width:50%; margin: auto;">
+<p align="center" width='50%'>
+<img src="images/interpolatorsComp3Zoom2.png" alt="Reviewed interpolators head to head." />
+</p>
+</div>
+
+<div style="margin: auto;">
+<p align="center">
+<img src="images/interpolatorsComp4.png" alt="Reviewed interpolators head to head." />
+</p>
+</div>
+
+<div style="margin: auto;">
+<p align="center">
+<img src="images/interpolatorsComp4Zoom1.png" alt="Reviewed interpolators head to head." />
+</p>
+</div>
+
+
+To check how the interpolators behave and perform, one visual way is to display them doing the same task: Let's dispose a set of points to interpolate and visualize the results.
+
+
+# 2D Interpolation (bilinear)
+
+I reviewed 2D interpolation with the value noise article as it is critical to be able to produce 2D noise (and extend the approach to _n dimensions_). However, in the value noise case, only the cosine interpolator was considered, as I wanted to introduce the diffrent fade functions with the Perlin noise, where they were effectively presented. 
+
+Let's recap 2D interpolation now, starting from the 1D case, where we have 2 lattice points $(x0, y0)$ and $(x1,y1)$. 
+
+When we want to interpolate the value $y_p$ of a point $x_p$ that complies with $x0 < x_p < x1$ we interpolate its value using one of the 3 interpolators or fade functions reviewed. 
+
+<div style="width:75%; margin: auto;">
+<p align="center">
+<img src="images/1DInterpolation.jpg" alt="1D Interpolation of a value using an interpolator"/>
+</p>
+</div>
+
+<br/>
+
+In 2D, we can use the same method but we have to take into account that we have to consider 4 lattice points instead of two, so the problem becomes:
+```math
+\text{Given four lattice points:}
+\\[2ex]
+\begin{aligned}
+L_{00} &= (x0, y0, z00)
+\\[2ex]
+L_{01} &= (x0, y1, z01)
+\\[2ex]
+L_{10} &= (x1, y0, z10)
+\\[2ex]
+L_{11} &= (x1, y1, z11)
+\end{aligned}
+\\[2ex]
+\text{We want to find the value z of a known position (x, y), given that:}
+\\[2ex]
+x0 < X < x1
+\\[2ex]
+y0 < Y < y1
+```
+
+In order to retrieve $z$ at $(x,y)$ , we:
+
+- **Step 1**: Consider 2 opposite lattice sides:
+`Side 0 => From (x0,y0) to (x0, y1)`
+`Side 1 => From (x1,y0) to (x1, y1)`
+And find the values `nx0` and `nx1`, resuting from:
+`nx0 = Interpolate(Side0 at Y)`
+`nx1 = Interpolate(Side1 at Y)`
+<br/>
+
+- **Step 2**: With values `nx0` and `nx1`, find `z`:
+`Z = Interpolate(nx0 to nx1 at X)`
+
+<br/>
+
+I guess we could call this a "bicosine" interpolation :) . The bilinear intepolation can be easily understood with some visual support:
+
+<table style="width:100%">
+    <tr>
+        <th style="width:33%">Initial setup</th>
+        <th style="width:33%">Step 2</th>
+        <th style="width:33%">Step 3</th>
+    </tr>
+    <tr>
+        <td><img src="./images/bllinearStep1.png"></td>
+        <td><img src="./images/bllinearStep2.png"></td>
+        <td><img src="./images/bllinearStep3.png"></td>
+    </tr>
+    <tr>
+        <td>Our lattice, showing the values of the 4 lattice points (corners) - in orange</td>
+        <td>Full interpolation of Side 0 and Side 1 through axis Y, to find nx0 and nx1 - in blue</td>
+        <td>Interpolation nx0 and nx1 through axis X (in red). Found the desired value Z at (X,Y) - dark gray line </td>
+    </tr>
+</table>
+
+```
+Detailed code of the 2D interpolation can be found in valueNoise2DInterpolationDemo.m
+```
+<br/>
 
 ***
 [Back to top](#table-of-contents)
