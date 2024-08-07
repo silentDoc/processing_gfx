@@ -492,7 +492,8 @@ When we want to interpolate the value $y_p$ of a point $x_p$ that complies with 
 In 2D, we can use the same method but we have to take into account that we have to consider 4 lattice points instead of two, so the problem becomes:
 ```math
 \text{Given four lattice points:}
-\\[2ex]
+```
+```math
 \begin{aligned}
 L_{00} &= (x0, y0, z00)
 \\[2ex]
@@ -502,12 +503,16 @@ L_{10} &= (x1, y0, z10)
 \\[2ex]
 L_{11} &= (x1, y1, z11)
 \end{aligned}
-\\[2ex]
+```
+```math
 \text{We want to find the value z of a known position (x, y), given that:}
+```
+```math
+\begin{aligned}
+x0 < &x < x1
 \\[2ex]
-x0 < X < x1
-\\[2ex]
-y0 < Y < y1
+y0 < &y < y1
+\end{aligned}
 ```
 
 In order to retrieve $z$ at $(x,y)$ , we:
