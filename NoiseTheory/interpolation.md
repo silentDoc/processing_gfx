@@ -13,7 +13,7 @@
     - [First order derivative](#first-order-derivative)
     - [Second order derivative](#second-order-derivative)
 - [Comparison of interpolators](#comparison-of-interpolators)
-- [2D Interpolation (bilinear)](#2d-interpolation-bilinear)
+- [2D Interpolation](#2d-interpolation)
 
 ***
 # Intro
@@ -433,11 +433,32 @@ Let's first show the interpolators jointly in the same image:
 </p>
 </div>
 
+The plot above shows the 4 interpolators we described above in their operating range, that is from 0 to 1. You can easily spot some visual characteristics and yield some intuitive conclusions:
+- Linear interpolation (black) exposes no smoothness at all.
+- The cosine interpolator (cyan) and Perlin's original fade function (blue) are almost identical.
+    - The results yielded by both interpolators will be the same, yet Perlin remains as the most computationally efficient
+- The improved fade function by Perlin is quite different to the previous 2
+    - It has almost no slope around 0 and 1, this will yield less "pointy" interpolation. 
+    - We should expect more "round" interpolations.
+
+To continue our comparison, let's see our interpolators in action. Let's start with the following points to interpolate:
+
 <div style="margin: auto;">
 <p align="center">
 <img src="images/interpolatorsComp2.png" alt="Reviewed interpolators head to head." />
 </p>
 </div>
+
+We have a list of lattice points as shown in the plot above, namely:
+```math
+\begin{aligned}
+l_1 = (1 , 3) \quad;\quad &l_2 = (5 , -2) \quad;\quad l_3 = (10 , 5) \\
+l_4 = (15 , 8) \quad;\quad &l_5 = (20 , 0) \quad;\quad l_6 = (22 , 7) \\
+l_7 = (24 , -7) \quad;\quad &l_8 = (25 , 8) \quad;\quad l_9 = (26 , -5) \\
+\end{aligned}
+```
+
+Let's show the interpolation of this list of points using the 4 methods that we reviewed together, to check out the behavior of each one.
 
 <div style="margin: auto;">
 <p align="center">
@@ -445,41 +466,45 @@ Let's first show the interpolators jointly in the same image:
 </p>
 </div>
 
+There is a clear outlier in the plot - the linear interpolator (green) - that yields a signal without any smoothness as a result. The other 3 look quite similar though. Let's zoom in to inspect closely:
+
 <div style="margin: auto;">
 <p align="center">
 <img src="images/interpolatorsComp3Zoom.png" alt="Reviewed interpolators head to head." />
 </p>
 </div>
 
-<div style="width:50%; margin: auto;">
-<p align="center" width='50%'>
+Looking at the final section of the results ($20<x<26$) we can confirm the intial intuitions:
+
+- Perlin's original fade function yields almost identical results to a cosine interpolator
+- Perlin's improved fade function is much milder when it comes to the interpolation - the slope of the interpolation is almost flat in the nearbies of the lattice points. 
+
+This effect can be also seen if we zoom in further an inspect, for instance, the peaks at $x=22$ and at $x=25$:
+
+<div style="margin: auto;">
+<p align="center">
 <img src="images/interpolatorsComp3Zoom2.png" alt="Reviewed interpolators head to head." />
 </p>
 </div>
 
-<div style="margin: auto;">
-<p align="center">
-<img src="images/interpolatorsComp4.png" alt="Reviewed interpolators head to head." />
-</p>
-</div>
+**Conclusions**:
 
-<div style="margin: auto;">
-<p align="center">
-<img src="images/interpolatorsComp4Zoom1.png" alt="Reviewed interpolators head to head." />
-</p>
-</div>
+Given the behavior of the 4 interpolators we reviewed, we can yield some quick conlcusions based on our limited experimentation:
 
+- It makes no sense to use the linear interpolator anywhere when it comes to noise signal, because it does not provide a smooth signal. 
+- The cosine and Perlin original fade function provide practically the same results. 
+- The improved fade function is way milder around the lattice points, providing smoother results than its predecessors in all circumstances
+    - That along with the 2nd derivative property leads me to recommend using it in all circumstances.
 
-To check how the interpolators behave and perform, one visual way is to display them doing the same task: Let's dispose a set of points to interpolate and visualize the results.
+# 2D Interpolation
 
+I reviewed 2D interpolation in the [value noise section](value_noise.md#2d-bilinear-interpolation-but-using-cosines) as it is critical to be able to produce 2D noise (and extend the approach to _n dimensions_). 
 
-# 2D Interpolation (bilinear)
+However, in the value noise case, only the cosine interpolator was considered, as I wanted to introduce the different fade functions step by step and the cosine interpolator was the only method I had introduced at that time.
 
-I reviewed 2D interpolation with the value noise article as it is critical to be able to produce 2D noise (and extend the approach to _n dimensions_). However, in the value noise case, only the cosine interpolator was considered, as I wanted to introduce the diffrent fade functions with the Perlin noise, where they were effectively presented. 
+So let's recap 2D interpolation now, starting from the 1D case, where we have 2 lattice points $(x0, y0)$ and $(x1,y1)$. 
 
-Let's recap 2D interpolation now, starting from the 1D case, where we have 2 lattice points $(x0, y0)$ and $(x1,y1)$. 
-
-When we want to interpolate the value $y_p$ of a point $x_p$ that complies with $x0 < x_p < x1$ we interpolate its value using one of the 3 interpolators or fade functions reviewed. 
+The interpolation operation consists on finding the value $y_p$ of a position $x_p$ that complies with $x0 < x_p < x1$. To find $y_p$, we use one of the 3 interpolators or fade functions reviewed. 
 
 <div style="width:75%; margin: auto;">
 <p align="center">
@@ -489,7 +514,7 @@ When we want to interpolate the value $y_p$ of a point $x_p$ that complies with 
 
 <br/>
 
-In 2D, we can use the same method but we have to take into account that we have to consider 4 lattice points instead of two, so the problem becomes:
+Moving into 2D, the problem is conceptually the same, but we have to take into account that we have to consider 4 lattice points instead of two, so it becomes:
 ```math
 \text{Given four lattice points:}
 ```
@@ -515,7 +540,19 @@ y0 < &y < y1
 \end{aligned}
 ```
 
-In order to retrieve $z$ at $(x,y)$ , we:
+A visual representation of the problem is the following:
+
+<div style="width:75%; margin: auto;">
+<p align="center">
+<img src="images/2dinterpproblem.png" alt="2D Interpolation problem. Find the value y_p at X, taking into account the 4 lattice points (orange)"/>
+</p>
+</div>
+
+<br/>
+
+In 2D, following the problem statement of the image above, we must find the value $z_p$ at position $x_p, y_p$ (X marker) taking into account the influence of the 4 lattice points (in orange).
+
+In order to retrieve $z_p$ at $(x_p,y_p)$ , we:
 
 - **Step 1**: Consider 2 opposite lattice sides:
 `Side 0 => From (x0,y0) to (x0, y1)`
@@ -525,12 +562,14 @@ And find the values `nx0` and `nx1`, resuting from:
 `nx1 = Interpolate(Side1 at Y)`
 <br/>
 
-- **Step 2**: With values `nx0` and `nx1`, find `z`:
-`Z = Interpolate(nx0 to nx1 at X)`
+- **Step 2**: With values `nx0` and `nx1`, find $z_p$:
+`Zp = Interpolate(nx0 to nx1 at X)`
 
 <br/>
 
-I guess we could call this a "bicosine" interpolation :) . The bilinear intepolation can be easily understood with some visual support:
+This is nothing more than a generalization of the **bilinear interpolation**, but using other 1D interpolators other than the linear interpolator to obtain better looking results. 
+
+The 2D intepolation can be easily understood with some visual support:
 
 <table style="width:100%">
     <tr>
@@ -551,9 +590,9 @@ I guess we could call this a "bicosine" interpolation :) . The bilinear intepola
 </table>
 
 ```
-Detailed code of the 2D interpolation can be found in valueNoise2DInterpolationDemo.m
+Detailed code of the 2D interpolation can be found in 
+..\matlab_value\valueNoise2DInterpolationDemo.m
 ```
-<br/>
 
 ***
 [Back to top](#table-of-contents)

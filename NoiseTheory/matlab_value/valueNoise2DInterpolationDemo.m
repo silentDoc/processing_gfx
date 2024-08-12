@@ -51,6 +51,33 @@ function valueNoise2DInterpolationDemo()
   line ([0 num_points], [0 0], "linestyle", "--", "color", "k");
   axis off; box off;
 
+  % Paint the problem at the beginning
+  figure;
+  grid = zeros(grid_size);
+  % Paint the grid and the lattice point random values
+  mesh(grid, "facecolor", "none", "edgecolor", "#c9c9c9");  hold on;
+  % Paint the lattice points
+  plot3([1 1],[1 1], [0 noise(1,1)], 'linewidth', 3, 'color', '#f2964b');   hold on;
+  plot3([1],[1], [noise(1,1)], 'o','MarkerSize',3);   hold on;
+
+  plot3([1 1],[num_points num_points], [0 noise(1,num_points)], 'linewidth', 3, 'color', '#f2964b');  hold on;
+  plot3([1],[num_points], [noise(1,num_points)], 'o','MarkerSize',3);   hold on;
+
+  plot3([num_points num_points],[1 1], [0 noise(num_points,1)], 'linewidth', 3 , 'color', '#f2964b');  hold on;
+  plot3([num_points], [1], [noise(num_points,1)], 'o','MarkerSize',3);   hold on;
+
+  plot3([num_points num_points],[num_points num_points], [0 noise(num_points,num_points)], 'linewidth', 3 , 'color', '#f2964b');  hold on;
+  plot3([num_points], [num_points], [noise(num_points,num_points)], 'o','MarkerSize',3);   hold on;
+
+  % Plot the interest point - the one interpolated
+  plot3([poi(1) poi(1)],[poi(2) poi(2)], [0 0], 'linewidth', 3, 'color','#000000');   hold on;
+  plot3(poi(1), poi(2), 0, 'x','MarkerSize',7,'color','#000000');   hold on;
+
+   axis off; box off;
+
+
+
+
   figure;
   grid = zeros(grid_size);
 
@@ -106,6 +133,7 @@ function valueNoise2DInterpolationDemo()
   plot3(xs, ys, finalside, 'linewidth', 3, 'color','#fc0015'); hold on;
 
   % Plot the interest point - the one interpolated
+  plot3(poi(1), poi(2), 0, 'x','MarkerSize',7,'color','#000000');   hold on;
   plot3([poi(1) poi(1)],[poi(2) poi(2)], [0 finalside(poi(2))], 'linewidth', 3, 'color','#666460');   hold on;
   plot3(poi(1), poi(2), finalside(poi(2)), 'o','MarkerSize',7);   hold on;
 
